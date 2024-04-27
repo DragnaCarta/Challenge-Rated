@@ -1,4 +1,5 @@
 import React from 'react'
+import { GoogleAnalytics } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 
 import Footer from './ui/footer'
@@ -33,6 +34,9 @@ export default function RootLayout({
           <Footer className="mt-auto" />
         </section>
       </body>
+      {process.env.NODE_ENV !== 'development' && (
+        <GoogleAnalytics gaId="G-G3RLQL08WN" />
+      )}
     </html>
   )
 }
