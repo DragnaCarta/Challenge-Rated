@@ -216,6 +216,14 @@ export default function Home({
                             <div className="grow" />
                           )}
                           <div className="flex gap-2 items-center">
+                            {canDelete && (
+                              <button
+                                className="btn btn-sm btn-square btn-neutral rounded-lg text-error"
+                                onClick={() => deleteWave(waveId)}
+                              >
+                                <IconTrash width={16} height={16} />
+                              </button>
+                            )}
                             {canDuplicate && (
                               <button
                                 className="btn btn-sm btn-neutral btn-square rounded-lg text-info"
@@ -227,15 +235,6 @@ export default function Home({
                                 }
                               >
                                 <IconCopy width={16} height={16} />
-                              </button>
-                            )}
-
-                            {canDelete && (
-                              <button
-                                className="btn btn-sm btn-square btn-neutral rounded-lg text-error"
-                                onClick={() => deleteWave(waveId)}
-                              >
-                                <IconTrash width={16} height={16} />
                               </button>
                             )}
                           </div>

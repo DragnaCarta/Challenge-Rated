@@ -95,6 +95,8 @@ export function Allies({
       <div className="flex flex-col gap-2 my-4 grow">
         {Object.keys(allyCrOccurrences)
           .map((x) => parseFloat(x))
+          .slice()
+          .sort((a, b) => b - a)
           .map((cr) => {
             const crCount = allyCrOccurrences[cr]
             return (
