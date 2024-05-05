@@ -1,13 +1,18 @@
 'use client'
 import clsx from 'clsx'
-import queryString from 'query-string'
-import { useEffect, useState } from 'react'
-
-import { CardBuildYourEncounter } from './components/CardBuildYourEncounter'
+import { useState } from 'react'
+import Big from 'big.js'
+import { v4 } from 'uuid'
+import { Allies } from './components/Allies'
+import { Wave } from './components/Wave'
 import EncounterCalculator from './lib/EncounterCalculator'
-import { INITIAL_PARTY_SIZE } from './lib/PartySizeOptions'
 import { INITIAL_PARTY_LEVEL } from './lib/PartyLevelOptions'
-import { IconLinkExternal } from './ui/icons/IconLinkExternal'
+import { INITIAL_PARTY_SIZE } from './lib/PartySizeOptions'
+
+import IconPlus from './ui/icons/IconPlus'
+import { IconRefresh } from './ui/icons/IconRefresh'
+import { IconTrash } from './ui/icons/IconTrash'
+import { IconCopy } from './ui/icons/IconCopy'
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -35,6 +40,10 @@ export default function Home({
       }
     | undefined
 }) {
+  const [waves, setWaves] = useState<{ [key: string]: number[] }>({
+    [v4()]: [],
+  })
+
   const [partySize, setPartySize] = useState(
     searchParams?.partySize !== undefined
       ? Number(searchParams?.partySize)
@@ -46,93 +55,63 @@ export default function Home({
       : INITIAL_PARTY_LEVEL
   )
 
-  const [enemies, setEnemies] = useState<number[]>([])
   const [allies, setAllies] = useState<number[]>([])
 
-  useEffect(() => {
-    // Update URL
-    if (
-      partySize > 0 ||
-      partyAverageLevel > 0 ||
-      enemies.length > 0 ||
-      allies.length > 0
-    ) {
-      const { protocol, host, pathname } = window.location
-      const paramString = queryString.stringify(
-        {
-          partySize: partySize === 0 ? undefined : partySize,
-          partyAverageLevel:
-            partyAverageLevel === 0 ? undefined : partyAverageLevel,
-          enemies,
-          allies,
-        },
-        { arrayFormat: 'comma' }
-      )
-
-      const url = new URL(`${protocol}${host}${pathname}?${paramString}`)
-
-      history.replaceState(null, '', url)
-    } else {
-      const { protocol, host, pathname } = window.location
-      const url = new URL(`${protocol}${host}${pathname}`)
-
-      history.replaceState(null, '', url)
-    }
-  }, [partySize, partyAverageLevel, enemies, allies])
-
-  useEffect(() => {
-    const search = searchParams
-    if (search) {
-      const parsedAllies =
-        search.allies !== undefined && !Array.isArray(search.allies)
-          ? search.allies.split(',')
-          : []
-      const parsedEnemies =
-        search.enemies !== undefined && !Array.isArray(search.enemies)
-          ? search.enemies.split(',')
-          : []
-
-      let allies: number[] = []
-      let enemies: number[] = []
-
-      allies = parsedAllies
-        .filter((cr): cr is string => typeof cr === 'string')
-        .map((cr: string) => parseFloat(cr as string))
-
-      enemies = parsedEnemies
-        .filter((cr): cr is string => typeof cr === 'string')
-        .map((cr: string) => parseFloat(cr as string))
-
-      const queryParams = {
-        enemies,
-        allies,
-      }
-
-      setEnemies(queryParams.enemies)
-      setAllies(queryParams.allies)
-    }
-    // eslint-disable-next-line
-  }, [])
-
-  //
-  const { hpLost, resourcesSpent, encounterDifficulty } =
-    _encounterCalculator.recalculateDifficulty(
-      partyAverageLevel,
-      partySize,
-      enemies,
-      allies
-    )
-
-  function addCreature(challengeRating: number, creatureToggle: 0 | 1) {
-    if (creatureToggle === 0) {
-      setEnemies([...enemies, challengeRating])
-    } else {
-      setAllies([...allies, challengeRating])
-    }
+  function addCreature(challengeRating: number) {
+    setAllies([...allies, challengeRating])
   }
 
+  const setWaveEnemies = (waveId: string, enemies: number[]) => {
+    setWaves((waves) => ({ ...waves, [waveId]: enemies }))
+  }
+
+  const deleteWave = (waveId: string) => {
+    setWaves((waves) => {
+      return Object.keys(waves)
+        .filter((currentWaveId) => waveId !== currentWaveId)
+        .reduce((acc, key) => ({ ...acc, [key]: waves[key] }), {})
+    })
+  }
+
+  const encounters = Object.values(waves)
+    .map((enemies) => {
+      return _encounterCalculator.recalculateDifficulty(
+        partyAverageLevel,
+        partySize,
+        enemies,
+        allies
+      )
+    })
+    .reduce(
+      (acc, encounter) => ({
+        ...acc,
+        hpLost: Big(acc.hpLost).plus(encounter.hpLost),
+        resourcesSpent: Big(acc.resourcesSpent).plus(encounter.resourcesSpent),
+      }),
+      { hpLost: Big(0), resourcesSpent: Big(0) }
+    )
+
+  const difficultyLevels: {
+    max: number
+    label: string
+  }[] = [
+    { max: 20, label: 'Mild' },
+    { max: 40, label: 'Bruising' },
+    { max: 60, label: 'Bloody' },
+    { max: 80, label: 'Brutal' },
+    { max: 100, label: 'Oppressive' },
+    { max: 130, label: 'Overwhelming' },
+    { max: 170, label: 'Crushing' },
+    { max: 250, label: 'Devastating' },
+    { max: Infinity, label: 'Impossible' },
+  ]
+  const encounterDifficulty =
+    difficultyLevels.find((level) => encounters.hpLost.toNumber() <= level.max)
+      ?.label || 'Unknown'
+
   const textColor =
-    powerToTextColor.find((ptc) => hpLost <= ptc.max)?.label ?? 'text-neutral'
+    powerToTextColor.find((ptc) => encounters.hpLost.toNumber() <= ptc.max)
+      ?.label ?? 'text-neutral'
 
   return (
     <section className="max-w-screen-md mx-auto">
@@ -154,17 +133,130 @@ export default function Home({
         </p>
         <aside className="mt-10">
           <section>
-            <CardBuildYourEncounter
-              partySize={partySize}
-              setPartySize={setPartySize}
-              partyAverageLevel={partyAverageLevel}
-              setPartyAverageLevel={setPartyAverageLevel}
-              addCreature={addCreature}
-              enemies={enemies}
-              setEnemies={setEnemies}
-              allies={allies}
-              setAllies={setAllies}
-            />
+            <div className="flex gap-2 items-center">
+              <h2>Your Encounter</h2>
+              <button
+                className="btn btn-square btn-sm"
+                onClick={() => {
+                  setWaves({ [v4()]: [] })
+                  setAllies([])
+                  setPartyAverageLevel(INITIAL_PARTY_LEVEL)
+                  setPartySize(INITIAL_PARTY_SIZE)
+                }}
+              >
+                <IconRefresh />
+              </button>
+            </div>
+
+            <div
+              className="w-full mt-6 md:grid"
+              style={{ gridTemplateColumns: '1fr auto 1fr' }}
+            >
+              <div
+                className="flex flex-col items-center justify-center py-4"
+                style={{
+                  backgroundImage:
+                    'repeating-linear-gradient(45deg, transparent, transparent 13px, var(--fallback-b2, oklch(var(--b1))) 13px, var(--fallback-b2, oklch(var(--b1))) 14px)',
+                }}
+              >
+                <div className="card textarea-info flex flex-col border border-base-200 bg-neutral p-4 shadow-lg">
+                  <Allies
+                    allies={allies}
+                    setAllies={setAllies}
+                    partySize={partySize}
+                    addCreature={addCreature}
+                    setPartySize={setPartySize}
+                    partyAverageLevel={partyAverageLevel}
+                    setPartyAverageLevel={setPartyAverageLevel}
+                  />
+                </div>
+              </div>
+
+              <div className="divider divider-vertical md:divider-horizontal">
+                VS
+              </div>
+              <div className="textarea-info flex flex-col justify-between  gap-6">
+                {Object.keys(waves).map((waveId, _, array) => {
+                  const wave = waves[waveId]
+                  const canDelete = array.length > 1
+                  const { hpLost, resourcesSpent } =
+                    _encounterCalculator.recalculateDifficulty(
+                      partyAverageLevel,
+                      partySize,
+                      wave,
+                      allies
+                    )
+
+                  const canDuplicate = Boolean(wave.length)
+
+                  return (
+                    <div
+                      key={waveId}
+                      className="card flex flex-col justify-between border border-base-200 bg-neutral p-4 shadow-lg"
+                    >
+                      <Wave
+                        enemies={wave}
+                        setEnemies={(ns) => setWaveEnemies(waveId, ns)}
+                        addCreature={(n) =>
+                          setWaveEnemies(waveId, [...wave, n])
+                        }
+                      />
+                      {(canDuplicate || canDelete) && (
+                        <aside className="flex gap-1 items-center -mx-4 -mb-4 p-4 mt-4 border-t border-t-base-200">
+                          {array.length > 1 && wave.length > 0 ? (
+                            <div className="grow flex gap-2">
+                              <span>
+                                HP: <b>{Math.round(hpLost)}%</b>
+                              </span>
+                              <span>
+                                Resources: <b>{Math.round(resourcesSpent)}%</b>
+                              </span>
+                            </div>
+                          ) : (
+                            <div className="grow" />
+                          )}
+                          <div className="flex gap-2 items-center">
+                            {canDelete && (
+                              <button
+                                className="btn btn-sm btn-square btn-neutral rounded-lg text-error"
+                                onClick={() => deleteWave(waveId)}
+                              >
+                                <IconTrash width={16} height={16} />
+                              </button>
+                            )}
+                            {canDuplicate && (
+                              <button
+                                className="btn btn-sm btn-neutral btn-square rounded-lg text-info"
+                                onClick={() =>
+                                  setWaves((waves) => ({
+                                    ...waves,
+                                    [v4()]: [...wave],
+                                  }))
+                                }
+                              >
+                                <IconCopy width={16} height={16} />
+                              </button>
+                            )}
+                          </div>
+                        </aside>
+                      )}
+                    </div>
+                  )
+                })}
+                <button
+                  className="btn btn-sm"
+                  onClick={() =>
+                    setWaves((waves) => ({
+                      ...waves,
+                      [v4()]: [],
+                    }))
+                  }
+                >
+                  Add New Wave/Phase
+                  <IconPlus style={{ height: '1.2rem', width: '1.2rem' }} />
+                </button>
+              </div>
+            </div>
           </section>
 
           <section className="mt-10 mb-4 shadow-xl">
@@ -183,7 +275,7 @@ export default function Home({
                   HP Loss
                 </p>
                 <p className={clsx('stat-value', textColor)}>
-                  {Number.isNaN(hpLost) ? 0 : Math.round(hpLost)}%
+                  {encounters.hpLost.round(0).toNumber()}%
                 </p>
               </div>
               <div className="stat">
@@ -191,10 +283,7 @@ export default function Home({
                   Resources Spent
                 </p>
                 <p className={clsx('stat-value', textColor)}>
-                  {Number.isNaN(resourcesSpent)
-                    ? 0
-                    : Math.round(resourcesSpent)}
-                  %
+                  {encounters.resourcesSpent.round(0).toNumber()}%
                 </p>
               </div>
             </div>
@@ -217,7 +306,7 @@ export default function Home({
                     HP Loss
                   </p>
                   <p className={clsx('stat-value', textColor)}>
-                    {Number.isNaN(hpLost) ? 0 : Math.round(hpLost)}%
+                    {encounters.hpLost.round(0).toNumber()}%
                   </p>
                 </div>
                 <div className="stat">
@@ -225,10 +314,7 @@ export default function Home({
                     Resources Spent
                   </p>
                   <p className={clsx('stat-value', textColor)}>
-                    {Number.isNaN(resourcesSpent)
-                      ? 0
-                      : Math.round(resourcesSpent)}
-                    %
+                    {encounters.resourcesSpent.round(0).toNumber()}%
                   </p>
                 </div>
               </div>

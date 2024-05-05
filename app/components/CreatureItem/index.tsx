@@ -42,7 +42,7 @@ export function CreatureItem({
         >
           <IconMinus />
         </button>
-        <button className="btn btn-sm join-item" tabIndex={-1}>
+        <button className="btn btn-sm join-item font-mono" tabIndex={-1}>
           {count}
         </button>
         <button
