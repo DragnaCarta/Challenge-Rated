@@ -1,3 +1,6 @@
+import Fraction from 'fraction.js'
+import multipliers from './multipliers.json'
+import Big from 'big.js'
 /**
  * EncounterCalculator.js
  *
@@ -60,27 +63,6 @@
  */
 class EncounterCalculator {
   /**
-   * Lookup table of scaling factors used to adjust the Power values of enemies and allies.
-   * Each object contains a 'ratio' representing the ratio of enemy/ally power to party power,
-   * and a 'multiplier' used to scale the Power of the enemies and allies in the encounter.
-   *
-   * @type {Array.<Object>}
-   */
-  static RatioScaleLookup = [
-    {
-      ratio: 6,
-      multiplier: 1.4,
-    } /* 3/14/24: I zero'd out the other ratios to remove overaggressive Power Decay scaling. I added this additional entry to handle cases in which E[DPR] OHKOs the target. This is a placeholder until I can do more precise calculations regarding power decay. -Dragna */,
-    { ratio: 5, multiplier: 1 },
-    { ratio: 2.5, multiplier: 1 },
-    { ratio: 1.5, multiplier: 1 },
-    { ratio: 1, multiplier: 1 },
-    { ratio: 0.67, multiplier: 1 },
-    { ratio: 0.4, multiplier: 1 },
-    { ratio: 0.2, multiplier: 1 },
-  ];
-
-  /**
    * Lookup table mapping player levels to their corresponding Power values.
    * Power values are based on a pre-determined formula or dataset that evaluates
    * the offensive and defensive capabilities of a player at a given level.
@@ -88,27 +70,27 @@ class EncounterCalculator {
    * @type {Object}
    */
   static LevelPowerLookup: Record<number, number> = {
-    1: 11,
-    2: 14,
-    3: 18,
-    4: 23,
-    5: 32,
+    1: 9,
+    2: 13,
+    3: 16,
+    4: 20,
+    5: 31,
     6: 35,
-    7: 41,
+    7: 38,
     8: 44,
-    9: 49,
-    10: 53,
-    11: 62,
-    12: 68,
-    13: 71,
-    14: 74,
-    15: 82,
-    16: 84,
-    17: 103,
-    18: 119,
-    19: 131,
-    20: 141,
-  };
+    9: 52,
+    10: 56,
+    11: 65,
+    12: 71,
+    13: 79,
+    14: 82,
+    15: 91,
+    16: 95,
+    17: 109,
+    18: 128,
+    19: 136,
+    20: 150,
+  }
 
   /**
    * Lookup table mapping Challenge Ratings (CR) to their corresponding Power values.
@@ -120,39 +102,39 @@ class EncounterCalculator {
   static CRPowerLookup: Record<number, number> = {
     0: 1,
     0.125: 5,
-    0.25: 10,
-    0.5: 16,
-    1: 22,
-    2: 28,
-    3: 37,
-    4: 48,
-    5: 60,
-    6: 65,
-    7: 70,
-    8: 85,
-    9: 85,
-    10: 95,
-    11: 105,
-    12: 115,
-    13: 120,
-    14: 125,
-    15: 130,
-    16: 140,
-    17: 150,
-    18: 160,
-    19: 165,
-    20: 180,
-    21: 200,
-    22: 225,
-    23: 250,
-    24: 275,
-    25: 300,
-    26: 325,
-    27: 350,
-    28: 375,
-    29: 400,
-    30: 425,
-  };
+    0.25: 9,
+    0.5: 13,
+    1: 20,
+    2: 26,
+    3: 35,
+    4: 46,
+    5: 58,
+    6: 66,
+    7: 74,
+    8: 90,
+    9: 98,
+    10: 111,
+    11: 125,
+    12: 135,
+    13: 150,
+    14: 160,
+    15: 170,
+    16: 187,
+    17: 215,
+    18: 226,
+    19: 237,
+    20: 259,
+    21: 302,
+    22: 336,
+    23: 371,
+    24: 405,
+    25: 454,
+    26: 489,
+    27: 541,
+    28: 577,
+    29: 613,
+    30: 669,
+  }
 
   /**
    * Recalculates the encounter difficulty based on current Party and Encounter states.
@@ -166,66 +148,60 @@ class EncounterCalculator {
     allyChallengeRatings: number[]
   ) {
     // Step 1: Scale the Power of each enemy and each ally.
-    let totalEnemyPower = 0;
-    let totalAllyPower = 0;
+    let totalEnemyPower = 0
+    let totalAllyPower = 0
 
     const enemyCrOccurrences = enemyChallengeRatings.reduce(function (
       acc: Record<number, number>,
       curr
     ) {
-      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
+      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
     },
-    {});
+    {})
 
     const allyCrOccurrences = allyChallengeRatings.reduce(function (
       acc: Record<number, number>,
       curr
     ) {
-      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
+      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
     },
-    {});
+    {})
 
     // Assuming CRPowerLookup, LevelPowerLookup, and RatioScaleLookup are your lookup tables
     Object.keys(enemyCrOccurrences).forEach(function (cr) {
-      const enemenyChallengeRating = parseFloat(cr);
+      const enemenyChallengeRating = parseFloat(cr)
       const enemiesWithChallengeRating =
-        enemyCrOccurrences[enemenyChallengeRating];
+        enemyCrOccurrences[enemenyChallengeRating]
       const enemyPower =
-        EncounterCalculator.CRPowerLookup[enemenyChallengeRating];
-      const ratio =
-        enemyPower / EncounterCalculator.LevelPowerLookup[partyLevel];
-      const closestRatioMultiplier = _findClosestRatio(
-        ratio,
-        EncounterCalculator.RatioScaleLookup
-      );
+        EncounterCalculator.CRPowerLookup[enemenyChallengeRating]
+
       // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
       // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
 
-      totalEnemyPower +=
-        enemyPower * closestRatioMultiplier * enemiesWithChallengeRating;
-    });
+      totalEnemyPower += enemyPower * enemiesWithChallengeRating
+    })
 
     Object.keys(allyCrOccurrences).forEach(function (cr) {
-      const allyChallengeRating = parseFloat(cr);
-      const alliesWithChallengeRating = allyCrOccurrences[allyChallengeRating];
-      const allyPower = EncounterCalculator.CRPowerLookup[allyChallengeRating];
-      const ratio =
-        allyPower / EncounterCalculator.LevelPowerLookup[partyLevel];
-      const closestRatioMultiplier = _findClosestRatio(
-        ratio,
-        EncounterCalculator.RatioScaleLookup
-      );
+      const allyChallengeRating = parseFloat(cr)
+      const alliesWithChallengeRating = allyCrOccurrences[allyChallengeRating]
+      const allyPower = EncounterCalculator.CRPowerLookup[allyChallengeRating]
+
       // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
       // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
 
-      totalAllyPower +=
-        allyPower * closestRatioMultiplier * alliesWithChallengeRating;
-    });
+      totalAllyPower += allyPower * alliesWithChallengeRating
+    })
 
     // Step 2: Calculate total player + ally Power.
     const partyPower =
-      EncounterCalculator.LevelPowerLookup[partyLevel] * partySize;
-    const totalPartyAndAllyPower = partyPower + totalAllyPower;
+      EncounterCalculator.LevelPowerLookup[partyLevel] * partySize
+
+    const maxCr = enemyChallengeRatings.reduce(
+      (max, cr) => Math.max(max, cr),
+      0
+    )
+
+    const multiplier = this.getMultiplier(partyLevel, maxCr)
 
     // Step 3: Calculate difficulty.
     // These are the same things?
@@ -233,12 +209,23 @@ class EncounterCalculator {
     // const resourcesSpent = Math.round(0.67 * hpLost);
 
     // const difficulty = Math.round(100 * Math.pow(totalEnemyPower / totalPartyAndAllyPower, 2));
-    const difficulty = (totalEnemyPower / totalPartyAndAllyPower) ** 2 * 100;
+    const difficulty = Big(totalEnemyPower)
+      .div(multiplier.times(Big(partyPower)).plus(Big(totalAllyPower)))
+      .pow(2)
+      .times(100)
+      .toNumber()
+
+    console.log({
+      multiplier: multiplier.toNumber(),
+      partyPower,
+      totalEnemyPower,
+      totalAllyPower,
+    })
 
     ///////////
     const difficultyLevels: {
-      max: number;
-      label: string;
+      max: number
+      label: string
     }[] = [
       { max: 20, label: 'Mild' },
       { max: 40, label: 'Bruising' },
@@ -249,19 +236,35 @@ class EncounterCalculator {
       { max: 170, label: 'Crushing' },
       { max: 250, label: 'Devastating' },
       { max: Infinity, label: 'Impossible' },
-    ];
+    ]
 
-    const hpLost = difficulty;
-    const resourcesSpent = Math.round(0.67 * hpLost);
+    const hpLost = difficulty
+    const resourcesSpent = Math.round(0.67 * hpLost)
     const encounterDifficulty =
-      difficultyLevels.find((level) => hpLost <= level.max)?.label || 'Unknown';
+      difficultyLevels.find((level) => hpLost <= level.max)?.label || 'Unknown'
 
     //
     return {
       hpLost,
       resourcesSpent,
       encounterDifficulty,
-    };
+    }
+  }
+  // Function to retrieve the power multiplier based on player level and highest CR
+  private getMultiplier(playerLevel: number, highestCr: number): Big {
+    const highestCrFraction = new Fraction(highestCr).toFraction(true)
+    const crKey = highestCrFraction // Construct the CR key as it appears in the dictionary
+
+    const levels: any = (multipliers as any)[crKey]
+
+    if (!levels) {
+      throw new Error('Invalid CR provided.')
+    }
+    const multiplier = levels[playerLevel]
+    if (multiplier === undefined) {
+      throw new Error('Invalid player level provided.')
+    }
+    return Big(multiplier)
   }
 }
 
@@ -278,27 +281,27 @@ const _findClosestRatio = function (
 ) {
   // Validate that the ratioTable is not empty.
   if (ratioTable.length === 0) {
-    throw new Error('The ratioTable must not be empty.');
+    throw new Error('The ratioTable must not be empty.')
   }
 
   // Initialize variables to track the closest ratio and its corresponding multiplier.
-  let closestRatio = ratioTable[0].ratio;
-  let closestMultiplier = ratioTable[0].multiplier;
-  let smallestDifference = Math.abs(targetRatio - closestRatio);
+  let closestRatio = ratioTable[0].ratio
+  let closestMultiplier = ratioTable[0].multiplier
+  let smallestDifference = Math.abs(targetRatio - closestRatio)
 
   // Loop through each entry in the ratioTable to find the closest ratio.
   for (const { ratio, multiplier } of ratioTable) {
-    const difference = Math.abs(targetRatio - ratio);
+    const difference = Math.abs(targetRatio - ratio)
 
     // Update closest values if a closer ratio is found.
     if (difference < smallestDifference) {
-      closestRatio = ratio;
-      closestMultiplier = multiplier;
-      smallestDifference = difference;
+      closestRatio = ratio
+      closestMultiplier = multiplier
+      smallestDifference = difference
     }
   }
 
-  return closestMultiplier;
-};
+  return closestMultiplier
+}
 
-export default EncounterCalculator;
+export default EncounterCalculator
