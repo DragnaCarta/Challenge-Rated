@@ -1,13 +1,158 @@
-<h2 align="center"> Why (& How) Challenge Rated Works</h2>
+# Why (& How) Challenge Rated Works
 
-Dungeons & Dragons 5th Edition is a tabletop role-playing game with three
-central modes of gameplay: exploration, social interaction, and combat. While
-exploration and social interaction are critical parts of gameplay, “there is
-no doubt about it that the game was designed with swords and sorcery in mind.”
-Combat is “an essential part of the game.”
+_Dungeons & Dragons_ 5th Edition is a tabletop role-playing game that features combat as a core mode of gameplay. However, while <a href="https://koboldplus.club/#/encounter-builder" target="_blank" rel="noreferrer">some Dungeon Masters have sought to faithfully apply the game’s combat-building principles</a>, many others have found those mechanics wanting. <a href="https://www.thegamer.com/dungeons-and-dragons-dungeon-masters-balance-encounter-tips-tricks/" target="_blank" rel="noreferrer">One author writes</a>, “One of the most common mistakes among new dungeon masters is solely relying on challenge rating [(CR)]”—5th Edition’s system for evaluating the difficulty of a combat encounter—“for balancing a combat encounter. While a monster's CR provides a rough estimation of what to expect in terms of balance, it's not enough information for every context.”
 
-However, while some Dungeon Masters have sought to faithfully apply the game’s combat-building principles, many others have found those mechanics wanting. One author writes, “One of the most common mistakes among new dungeon masters is solely relying on challenge rating”—5th Edition’s system for evaluating the difficulty of a combat encounter—“for balancing a combat encounter. While a monster's CR provides a rough estimation of what to expect in terms of balance, it's not enough information for every context.”
+Over time, some in the 5th Edition community have come to regard the official combat-building system as a lost cause. <a href="https://www.reddit.com/r/dndnext/comments/9nxb78/comment/e7pqkh6/" target="_blank" rel="noreferrer">One commenter writes</a>, “A lot of it is experience and guesswork—start out underestimating your party, and then balance up as you find out their strengths and weaknesses.” <a href="https://www.reddit.com/r/DnD/comments/afrm4m/comment/ee0ya3f/" target="_blank" rel="noreferrer">Another advises</a>, “If you want danger you're going to have to ignore CR and throw whatever you want at your [p]layers.” <a href="https://www.enworld.org/threads/extra-reactions-or-not-quite-legendary-actions.689111/#post-8658233" target="_blank" rel="noreferrer">A third suggests</a>, “The CR [system] is hopelessly broken below [CR] 1 and above [CRs] 7 or 8.” <a href="https://www.reddit.com/r/DMAcademy/comments/ijyd3t/comment/g3h59mw/" target="_blank" rel="noreferrer">A fourth concludes</a>, “Battle balancing in 5e is an art based on pseudoscience.”
 
-Over time, some in the 5th Edition community have come to regard the official combat-building system as a lost cause. One commenter writes, “A lot of it is experience and guesswork—start out underestimating your party, and then balance up as you find out their strengths and weaknesses.” Another advises, “If you want danger you're going to have to ignore CR and throw whatever you want at your [p]layers.” A third suggests, “The CR [system] is hopelessly broken below [CR] 1 and above [CRs] 7 or 8.” A fourth concludes, “Battle balancing in 5e is an art based on pseudoscience.”
+Many Dungeon Masters have come to agree that the “action economy”—the total number of actions that each side in a combat encounter can take per round—is the key to understanding combat balance. “Action Economy is the most important thing, followed by terrain,” <a href="https://www.reddit.com/r/DMAcademy/comments/ijyd3t/comment/g3h59mw/" target="_blank" rel="noreferrer">writes one</a>. It’s “a reason [why] challenge rating[s] [are] not considered accurate,” <a href="https://www.dungeonsolvers.com/2018/06/01/understanding-the-action-economy-in-dd-5e/" target="_blank" rel="noreferrer">writes another</a>.
 
-Many Dungeon Masters have come to agree that the “action economy”—the total number of actions that each side in a combat encounter can take per round—is the key to understanding combat balance. “Action Economy is the most important thing, followed by terrain,” writes one. It’s “a reason [why] challenge rating[s] [are] not considered accurate,” writes another.
+But why does this happen? Why is 5th Edition encounter balancing broken? And, more importantly, how do we fix it?
+
+## I. The Boblin Squad
+
+Assume we have a party of five players, and each player deals 2 damage on their turn, for a total of 10 damage per round. Let’s see how this party fares in battle under a few different circumstances—and what this tells us about how 5th Edition’s encounter-building formula does (and doesn’t) work.
+
+### A. Boblin
+
+Meet **Boblin**.
+
+![a picture of a goblin](/images/boblin.png)
+
+Boblin is a simplified **goblin**—he has 10 hit points and deals 1 damage each round. **Boblin will die in exactly 1 round, dealing a total of 1 damage.**
+
+![a chart showing that boblin deals 1 damage over 1 round](/images/boblin_damage.png)
+
+If Boblin has +3 to his attack rolls and an Armor Class of 10, Boblin is a **Challenge Rating 0** enemy and awards 10 experience points when defeated.
+
+### B. Shieldlin
+
+Next, meet **Shieldlin**.
+
+![a picture of a goblin with a shield](/images/shieldlin.png)
+
+Shieldlin is a defensive goblin—he has 40 hit points and deals 1 damage each round. **Shieldlin will die in exactly 4 rounds, dealing a total of 4 damage.** Shieldlin is **four times as powerful** as Boblin.
+
+![a chart showing that shieldlin deals 4 damage over 4 rounds](/images/shieldlin_damage.png)
+
+We should therefore assume Shieldlin will award 4x as many experience points as Boblin (40 XP). However, if Shieldlin has the same attack bonus and Armor Class as Boblin, Shieldlin is a **Challenge Rating 1/8** enemy and awards 25 experience points when defeated—only 2.5x as many as Boblin.
+
+### C. Swordlin
+
+![a picture of a goblin with some swords](/images/swordlin.png)
+
+Swordlin is an offensive goblin—she has 10 hit points and deals 4 damage each round. **Swordlin will die in exactly 1 round, dealing a total of 4 damage.** Like Shieldlin, Swordlin is **four times as powerful** as Boblin.
+
+![a chart showing that swordlin deals 4 damage over 1 round](/images/swordlin_damage.png)
+
+We should therefore assume Swordlin will award 4x as many experience points as Boblin (40 XP). However, If Shieldlin has the same attack bonus and Armor Class as Boblin, Shieldlin is a **Challenge Rating 1/8** enemy and awards 25 experience points when defeated—only 2.5x as many as Boblin.
+
+### D. The Boblin Squad
+
+Finally, meet **The Boblin Squad**, composed of Boblin’s four best **goblin** friends.
+
+![a picture of four goblins](/images/boblin_squad.png)
+
+Together, the Boblin Squad has 40 hit points and deals 4 damage every round.
+
+If the players attack each goblin equally, **the Boblin Squad will die in exactly 4 rounds, dealing a total of 16 damage.** Under these conditions, the Boblin Squad is **sixteen times** as powerful as Boblin. We should therefore assume the Boblin Squad will award 16x as many experience points as Boblin (160 XP).
+
+![a chart showing that the boblin squad deals 16 damage over 4 rounds](/images/boblin_squad_damage_no_decay.png)
+
+Even if the players tactically focus their damage and kill one goblin per round, **the Boblin Squad will die in exactly four rounds, dealing a total of 10 damage**. Under these conditions, the Boblin Squad is still **ten times** as powerful as Boblin. We should therefore assume the Boblin Squad will award 10x as many experience points as Boblin (100 XP).
+
+![a chart showing that the boblin squad deals 10 damage over 4 rounds if one goblin dies each round](/images/boblin_squad_damage_decay.png)
+
+In either case, the Boblin Squad is a group of four **Challenge Rating 0** enemies, each awarding 10 experience points. When adjusted using the 5th Edition formula for encounters with multiple monsters, the Boblin Squad awards a total of 80 experience points—**only 8x as many as Boblin**.
+
+## II. The Multiplier Problem
+
+To measure enemy strength, let’s create a unit called “Power,” using Boblin as a benchmark. Assuming Boblin has a strength of 1 Power, let’s take another look at these experience point values.
+
+| Encounter                  | Power | Expected XP | Actual XP | Difference |
+| :------------------------- | :---- | :---------- | :-------- | ---------: |
+| Boblin                     | 1     | 10          | 10        |         1x |
+| Shieldlin                  | 4     | 40          | 25        |       0.6x |
+| Swordlin                   | 4     | 40          | 25        |       0.6x |
+| The Boblin Squad           | 16    | 160         | 80        |       0.5x |
+| The Boblin Squad (Focused) | 10    | 100         | 80        |       0.8x |
+
+The first issue we notice is that, for at least some solo enemies (i.e., Shieldlin and Swordlin), 5th Edition underweights the number of experience points they award by almost half. The second issue we notice is that 5th Edition can actually underweight the number of experience points a group of monsters awards by up to half.
+
+This divergence gets even worse for a group of ten **goblins**—call it the Boblin Platoon—which together has 10 times as many hit points as Boblin, deals 10 damage per turn, and deals 100 damage. The Boblin Platoon is 100 times as powerful as Boblin, but only awards 250 experience points—25x as many as Boblin does. From this, we learn that **the disparity between “expected” and “actual” experience points only grows as we add more enemies to an encounter.**
+
+This matters because 5th Edition’s encounter-building formula <a href="https://www.dndbeyond.com/sources/basic-rules/building-combat-encounters#EvaluatingEncounterDifficulty" target="_blank" rel="noreferrer">explicitly uses</a> adjusted monster experience points to build encounters. As a result, **5th Edition often tells Dungeon Masters that encounters with multiple monsters are far less dangerous than they actually are—the result of the so-called “action economy.”**
+
+But why does this happen? Let’s take a closer look at the 5th Edition encounter-building formula:
+
+1. First, the Dungeon Master uses the _XP Thresholds by Character Level_ table to find the “XP Threshold” for all four possible encounter difficulties: Easy, Medium, Hard, or Deadly. _(For example, the XP Thresholds for a 1st-level character are 25, 50, 75, and 100, respectively.)_
+2. Second, the Dungeon Master adds the players’ “XP Thresholds” together to calculate the “Party XP Threshold” for each difficulty. This is the **total amount of experience points the encounter of each difficulty should award.** _(For example, the XP Thresholds for a party of five 1st-level characters would be 125, 250, 375, and 500.)_
+3. Third, the Dungeon Master adds up the experience points for all monsters in the encounter to calculate the “Total XP.” _(For example, an encounter with a group of four ordinary CR 1/4 **goblins**, where each goblin is worth 50 XP, would begin with 200 Total XP.)_
+4. Fourth, the Dungeon Master calculates the “Total Adjusted XP” of the encounter by multiplying the Total XP by a multiplier. (This multiplier is determined by the number of monsters in the encounter.) _(For example, for a group of four goblins, the multiplier is x2, resulting in a Total Adjusted XP of 400.)_
+5. Fifth, the Dungeon Master compares the Total Adjusted XP to the Party XP Thresholds to determine the encounter’s difficulty. _(For example, because the Total Adjusted XP is 400, this is a Hard encounter.)_
+
+We wind up with a Hard encounter with a Total Adjusted XP of 400. But wait—since we already know that four goblins are sixteen times as powerful as one goblin, we know that they should actually be worth 800 experience points, **sixteen** times as many as a single CR 1/4 goblin worth 50 XP.** Instead of a Hard encounter, we’ve actually created a Deadly encounter—one worth almost _twice as many experience points_ as the Party’s Deadly XP Threshold.**
+
+Note that this also happens in the opposite direction—with players instead of monsters. Let’s see what happens when we compare the strength of a party of four players with a party of five:
+
+1. A party of five players has 1.25x as many hit points as the party of four players, and therefore survives 1.25x as many rounds. If we assume the party of four players survives for 4 rounds before dying, the party of five players survives for 5 rounds instead.
+2. Each round, the party of five players deals 1.25x as much damage. If we assume the party of four players deals 8 damage per round, the party of five players deals 10 damage per round instead.
+3. Overall, the party of four players deals 32 damage before dying, while the party of five players deals 50 damage before dying. **The party of five players is approximately 1.6x as strong as the party of four players.** We would therefore expect the five-player party to face monsters worth **1.6x as much Total Adjusted XP** as the four-player party in order to face the same difficulty.
+
+But what do these parties look like to the 5th Edition encounter-building formula?
+
+1. Let’s assume each party is made up of 1st-level players, and we’re trying to build a Hard encounter. The Player XP Threshold for a Hard encounter at 1st level is 75 XP.
+2. Using this Player XP Threshold, we should build an encounter worth 300 XP for the four-player party and an encounter worth 375 XP for the five-player party. **According to the 5th Edition formula, the five-player party should face monsters worth 1.25x as much Total Adjusted XP as the four-player party—a far weaker encounter than we would expect.**
+
+## III. The Scaling Problem
+
+We now know that the 5th edition encounter-building formula fails to properly account for additional monsters or players —the so-called “action economy” problem. However, it only gets worse from here, and for a particularly insidious reason: **Enemy XP values don’t scale with enemy strength.**
+
+Let’s see what happens, for example, when we compare a monster of Challenge Rating 1 with a monster of Challenge Rating 2—two monsters that, according to the Monster Statistics by Challenge Rating table in the _Dungeon Master’s Guide_, should generally have identical Armor Classes and attack bonuses:
+
+1. A monster of Challenge Rating 1, on average, has 78 hit points and deals 11 damage per round (rounded down).
+2. A monster of Challenge Rating 2, on average, has 93 hit points and deals 17 damage per round (rounded down). It has 1.19x as many hit points and deals 1.55x as much damage as the CR 1 monster, and is therefore **approximately 1.84x stronger.**
+3. A CR 1 monster, according to 5th Edition, is worth 200 XP. We would therefore expect the CR 2 monster to be worth 368 XP—1.84x as many. Instead, however, the CR 2 monster is worth 450 XP—**2.25x as many experience points** as the CR 1 monster. **As a result, we wind up with a monster that’s far weaker than its experience points suggest**—which means that, when we try to build an encounter using a CR 2 monster, it’ll be far easier than we intended.
+
+(This, interestingly, is the biggest reason why Dungeon Masters increasingly struggle to challenge parties above 5th, 11th, and 17th level—because the monsters are getting progressively _weaker_ relative to their experience point values. This is _also_ why combat is so lethal to low-level parties, especially 1st-level parties: the monsters are the (relative) strongest they’ll ever be!)
+
+Now, instead of one problem, we have two:
+
+1. A monster’s experience points fail to capture how strong that monster actually is.
+2. Encounters get progressively more distorted as we add or take away monsters or players.
+
+When both problems are put together, **it becomes actively impossible to ever create a “balanced” encounter.**
+
+## IV. How Challenge Rated Works
+
+The **Challenge Rated** encounter-building calculator addresses these problems by using DragnaCarta’s <a href="https://www.gmbinder.com/share/-N4m46K77hpMVnh7upYa" target="_blank" rel="noreferrer">Challenge Ratings 2.0</a> encounter-building system. Here’s how the system works:
+
+1. First, the system uses the Monster Statistics by Challenge Rating table in the _Dungeon Master’s Guide_ to **calculate each Challenge Rating’s relative “Power.” _(For math nerds, a Challenge Rating’s Power is calculated as the square root of its effective hit points multiplied by its effective damage per round.)_**
+2. Second, the system uses multiple player class benchmarks to **estimate each player level’s relative “Power.”** _(Power for players is calculated using the same mathematical formula as for monsters, but with more complex inputs reflecting spells and class features.)_
+3. Third, the system adds together the total Power of all enemies in the encounter. It then compares the Total Enemy Power to the total Power of all players (and allies) in the encounter to **estimate what percentage of their hit points the players will lose over the course of the encounter.** _(For math nerds, the estimated percentage of hit points lost is equal to the Total Enemy Power divided by the Total Party Power, squared.)_
+4. Fourth, the system uses the estimated Hit Points Lost to **estimate how many daily resources the players will need to spend to win**. _(Because players can spend all of their hit points, plus half of their maximum hit dice, each day, the system estimates that an encounter that consumes all of the players’ hit points will consume approximately two-thirds of their total “health pool,” including hit points and hit dice. Because players tend to lose fewer hit points and hit dice when they use other resources—such as spell slots, class features, and magic item charges—and vice-versa, the system estimates that overall resources will decrease at approximately the same rate as if the players only had health to spend.)_
+
+Once the system has calculated the estimated hit points the players will lose in an encounter, it assigns that encounter a difficulty:
+
+- **Mild**, for encounters that will likely consume 0 to 20% of the players’ total maximum hit points.
+- **Bruising**, for encounters that will likely consume 20 to 40% of the players’ total maximum hit points.
+- **Bloody**, for encounters that will likely consume 40 to 60% of the players’ total maximum hit points.
+- **Brutal**, for encounters that will likely consume 60 to 80% of the players’ total maximum hit points.
+- **Oppressive**, for encounters that will likely consume 80 to 100% of the players’ total maximum hit points.
+- **Overwhelming**, for encounters that will likely consume 100 to 130% of the players’ total maximum hit points.
+- **Crushing**, for encounters that will likely consume 130 to 170% of the players’ total maximum hit points.
+- **Devastating**, for encounters that will likely consume 170 to 250% of the players’ total maximum hit points.
+- **Impossible**, for encounters that will likely consume 250 to 500% of the players’ total maximum hit points.
+
+(Why have encounter difficulties that consume more than 100% of the players’ total maximum hit points? Because true combat is impossible to fully model mathematically, the Challenge Ratings 2.0 system doesn’t account for tactics, terrain, and other unique circumstances. Parties with particularly strong tactics, particularly optimized character builds, or particularly advantageous terrain may need more difficult encounters to be properly challenged.)
+
+## V. Whether Challenge Rated Works
+
+That’s all great in theory—but does the Challenge Rated calculator work in practice? Let’s see what system playtesters think:
+
+---
+
+_“Challenge Rated gives the DM specific and adjustable levers to use in balancing encounters to the exact level that they want, without having to spend hours reverse-engineering specific power levels. It has personally saved me hours of math since the start of my campaign. The only alternative I've found that comes anywhere as close to accurately calibrating encounters is "secretly changing monster hit points on the fly mid-combat." —Windsock_
+
+---
+
+_“My players wanted a full remaster of an adventure we played as kids—something we could play at either 3rd, 4th, or 5th level—which meant I needed to balance every encounter for parties of each level. This would have involved hours of tedious work and calculations normally, but with the Challenge Rated calculator, I could have a mathematically accurate and quick estimate of how each encounter would go. Before long, I had six combat encounters, including a boss fight with henchmen, planned out and balanced more easily and more quickly than any other method or tool I’ve used.” —Murhapuro_
