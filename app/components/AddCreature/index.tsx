@@ -7,9 +7,9 @@ type Props = {
   creatureToggle: 0 | 1
   unit?: string
 }
-
+const EMPTY = 'empty'
 export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
-  const [creature, setCreature] = useState(ChallengeRatingOptions[0].value)
+  const [creature, setCreature] = useState(EMPTY)
 
   return (
     <div className="form-control">
@@ -18,27 +18,30 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
           className="btn btn-sm join-item cursor-default animate-none"
           tabIndex={-1}
         >
-          {creatureToggle ? 'ALLY' : 'ENEMY'}{' '}
+          Add {creatureToggle ? 'Ally' : 'Enemy'}{' '}
         </div>
 
         <select
           className="select select-sm join-item grow"
           value={creature}
-          onChange={(event) => setCreature(Number(event.target.value))}
+          onChange={(event) => setCreature(event.target.value)}
         >
+          <option value={EMPTY}>
+            Choose {creatureToggle ? 'Ally' : 'Enemy'} CR
+          </option>
           {ChallengeRatingOptions.map((cr) => (
-            <option
-              key={cr.displayText}
-              value={cr.value}
-              selected={cr.value == creature}
-            >
+            <option key={cr.displayText} value={cr.value}>
               CR {cr.displayText}
             </option>
           ))}
         </select>
         <button
           className="btn btn-sm btn-square join-item"
-          onClick={() => addCreature(Number(creature!), creatureToggle)}
+          onClick={() => {
+            addCreature(Number(creature!), creatureToggle)
+            setCreature(EMPTY)
+          }}
+          disabled={creature === EMPTY}
         >
           <IconPlus />
         </button>
