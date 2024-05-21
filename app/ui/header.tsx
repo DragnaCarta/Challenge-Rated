@@ -15,7 +15,7 @@ function Header() {
           Challenge Rated
         </Link>
         <Link href="/info" className="link link-hover">
-          How it works?
+          How It Works
         </Link>
       </nav>
     </header>
