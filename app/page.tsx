@@ -13,6 +13,7 @@ import IconPlus from './ui/icons/IconPlus'
 import { IconRefresh } from './ui/icons/IconRefresh'
 import { IconTrash } from './ui/icons/IconTrash'
 import { IconCopy } from './ui/icons/IconCopy'
+import { InfoTooltip } from './components/InfoTooltip'
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -153,7 +154,7 @@ export default function Home({
               style={{ gridTemplateColumns: '1fr auto 1fr' }}
             >
               <div
-                className="flex flex-col items-center justify-center py-4"
+                className="md:flex md:flex-col items-center justify-center md:py-4"
                 style={{
                   backgroundImage:
                     'repeating-linear-gradient(45deg, transparent, transparent 13px, var(--fallback-b2, oklch(var(--b1))) 13px, var(--fallback-b2, oklch(var(--b1))) 14px)',
@@ -280,7 +281,7 @@ export default function Home({
               </div>
               <div className="stat">
                 <p className="stat-title inline-flex items-center gap-2">
-                  Resources Spent
+                  Resources Spent <InfoTooltip />
                 </p>
                 <p className={clsx('stat-value', textColor)}>
                   {encounters.resourcesSpent.round(0).toNumber()}%
@@ -311,7 +312,7 @@ export default function Home({
                 </div>
                 <div className="stat">
                   <p className="stat-title inline-flex items-center gap-2">
-                    Resources Spent
+                    Resources Spent <InfoTooltip />
                   </p>
                   <p className={clsx('stat-value', textColor)}>
                     {encounters.resourcesSpent.round(0).toNumber()}%
