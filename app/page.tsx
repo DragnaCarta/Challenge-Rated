@@ -195,8 +195,14 @@ export default function Home({
                       key={waveId}
                       className="card flex flex-col justify-between border border-base-200 bg-neutral p-4 shadow-lg overflow-hidden"
                     >
-                      <header className="-mt-4 mb-4 -mx-4 p-2 px-4 border-b-base-200 border-b bg-base-100 flex justify-between items-center">
-                        <h3>Wave/Phase #{index + 1}</h3>
+                      <header className="-mt-4 mb-4 -mx-4 p-2 px-4 border-b-base-200 border-b bg-base-100 flex justify-between items-center min-h-[50px]">
+                        <h3>
+                          {array.length > 1 ? (
+                            <>Enemy Wave/Phase #{index + 1}</>
+                          ) : (
+                            <>Enemies</>
+                          )}
+                        </h3>
                         <div className="flex gap-2 items-center">
                           {canDelete && (
                             <button
