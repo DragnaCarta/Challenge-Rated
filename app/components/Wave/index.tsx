@@ -45,7 +45,6 @@ export function Wave({ enemies, setEnemies, addCreature }: Props) {
     <>
       <div className="flex flex-col gap-2">
         {keys
-
           .map((x) => parseFloat(x))
           .map((cr) => {
             const crCount = enemyCrOccurrences[cr]
