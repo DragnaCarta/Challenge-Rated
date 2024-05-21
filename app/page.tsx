@@ -135,7 +135,7 @@ export default function Home({
         <aside className="mt-10">
           <section>
             <div className="flex gap-2 items-center">
-              <h2>Your Encounter</h2>
+              <h2 className="text-2xl">Your Encounter</h2>
               <button
                 className="btn btn-square btn-sm"
                 onClick={() => {
@@ -177,7 +177,7 @@ export default function Home({
                 VS
               </div>
               <div className="textarea-info flex flex-col justify-between  gap-6">
-                {Object.keys(waves).map((waveId, _, array) => {
+                {Object.keys(waves).map((waveId, index, array) => {
                   const wave = waves[waveId]
                   const canDelete = array.length > 1
                   const { hpLost, resourcesSpent } =
@@ -193,8 +193,35 @@ export default function Home({
                   return (
                     <div
                       key={waveId}
-                      className="card flex flex-col justify-between border border-base-200 bg-neutral p-4 shadow-lg"
+                      className="card flex flex-col justify-between border border-base-200 bg-neutral p-4 shadow-lg overflow-hidden"
                     >
+                      <header className="-mt-4 mb-4 -mx-4 p-2 px-4 border-b-base-200 border-b bg-base-100 flex justify-between items-center">
+                        <h3>Wave/Phase #{index + 1}</h3>
+                        <div className="flex gap-2 items-center">
+                          {canDelete && (
+                            <button
+                              className="btn btn-sm btn-square rounded-lg text-error"
+                              onClick={() => deleteWave(waveId)}
+                            >
+                              <IconTrash width={16} height={16} />
+                            </button>
+                          )}
+                          {canDuplicate && (
+                            <button
+                              className="btn btn-sm btn-square rounded-lg text-info"
+                              onClick={() =>
+                                setWaves((waves) => ({
+                                  ...waves,
+                                  [v4()]: [...wave],
+                                }))
+                              }
+                            >
+                              <IconCopy width={16} height={16} />
+                            </button>
+                          )}
+                        </div>
+                      </header>
+
                       <Wave
                         enemies={wave}
                         setEnemies={(ns) => setWaveEnemies(waveId, ns)}
@@ -202,45 +229,18 @@ export default function Home({
                           setWaveEnemies(waveId, [...wave, n])
                         }
                       />
-                      {(canDuplicate || canDelete) && (
-                        <aside className="flex gap-1 items-center -mx-4 -mb-4 p-4 mt-4 border-t border-t-base-200">
-                          {array.length > 1 && wave.length > 0 ? (
-                            <div className="grow flex gap-2">
-                              <span>
-                                HP: <b>{Math.round(hpLost)}%</b>
-                              </span>
-                              <span>
-                                Resources: <b>{Math.round(resourcesSpent)}%</b>
-                              </span>
-                            </div>
-                          ) : (
-                            <div className="grow" />
-                          )}
-                          <div className="flex gap-2 items-center">
-                            {canDelete && (
-                              <button
-                                className="btn btn-sm btn-square btn-neutral rounded-lg text-error"
-                                onClick={() => deleteWave(waveId)}
-                              >
-                                <IconTrash width={16} height={16} />
-                              </button>
-                            )}
-                            {canDuplicate && (
-                              <button
-                                className="btn btn-sm btn-neutral btn-square rounded-lg text-info"
-                                onClick={() =>
-                                  setWaves((waves) => ({
-                                    ...waves,
-                                    [v4()]: [...wave],
-                                  }))
-                                }
-                              >
-                                <IconCopy width={16} height={16} />
-                              </button>
-                            )}
+                      {array.length > 1 && wave.length > 0 ? (
+                        <aside className="flex gap-1 items-center -mx-4 -mb-4 py-3 px-4 mt-4 border-t border-t-base-200">
+                          <div className="grow flex gap-2">
+                            <span>
+                              HP: <b>{Math.round(hpLost)}%</b>
+                            </span>
+                            <span>
+                              Resources: <b>{Math.round(resourcesSpent)}%</b>
+                            </span>
                           </div>
                         </aside>
-                      )}
+                      ) : null}
                     </div>
                   )
                 })}
