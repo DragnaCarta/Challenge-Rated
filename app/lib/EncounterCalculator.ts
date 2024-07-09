@@ -138,14 +138,13 @@ class EncounterCalculator {
 
   /**
    * Recalculates the encounter difficulty based on current Party and Encounter states.
-   *
-   * @returns {void}
    */
   recalculateDifficulty(
     partyLevel: number,
     partySize: number,
     enemyChallengeRatings: number[],
-    allyChallengeRatings: number[]
+    allyChallengeRatings: number[],
+    accountForPowerDecay: boolean
   ) {
     // Step 1: Scale the Power of each enemy and each ally.
     let totalEnemyPower = 0
@@ -210,17 +209,14 @@ class EncounterCalculator {
 
     // const difficulty = Math.round(100 * Math.pow(totalEnemyPower / totalPartyAndAllyPower, 2));
     const difficulty = Big(totalEnemyPower)
-      .div(multiplier.times(Big(partyPower)).plus(Big(totalAllyPower)))
+      .div(
+        (accountForPowerDecay ? multiplier : Big(1))
+          .times(Big(partyPower))
+          .plus(Big(totalAllyPower))
+      )
       .pow(2)
       .times(100)
       .toNumber()
-
-    console.log({
-      multiplier: multiplier.toNumber(),
-      partyPower,
-      totalEnemyPower,
-      totalAllyPower,
-    })
 
     ///////////
     const difficultyLevels: {
@@ -248,6 +244,7 @@ class EncounterCalculator {
       hpLost,
       resourcesSpent,
       encounterDifficulty,
+      multiplier: multiplier.toNumber(),
     }
   }
   // Function to retrieve the power multiplier based on player level and highest CR
