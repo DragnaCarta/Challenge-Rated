@@ -14,6 +14,7 @@ import { IconRefresh } from './ui/icons/IconRefresh'
 import { IconTrash } from './ui/icons/IconTrash'
 import { IconCopy } from './ui/icons/IconCopy'
 import { InfoTooltip } from './components/InfoTooltip'
+import { create } from 'domain'
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -29,6 +30,13 @@ const powerToTextColor = [
   { max: Infinity, label: 'text-red-900' },
 ]
 
+type Wave = {
+  enemies: number[]
+  scaling: boolean
+}
+
+const INITIAL_WAVE: Wave = { enemies: [], scaling: false }
+const createInitialWave = () => ({ [v4()]: INITIAL_WAVE })
 export default function Home({
   searchParams,
 }: {
@@ -41,9 +49,9 @@ export default function Home({
       }
     | undefined
 }) {
-  const [waves, setWaves] = useState<{ [key: string]: number[] }>({
-    [v4()]: [],
-  })
+  const [waves, setWaves] = useState<{ [key: string]: Wave }>(
+    createInitialWave()
+  )
 
   const [partySize, setPartySize] = useState(
     searchParams?.partySize !== undefined
@@ -63,7 +71,17 @@ export default function Home({
   }
 
   const setWaveEnemies = (waveId: string, enemies: number[]) => {
-    setWaves((waves) => ({ ...waves, [waveId]: enemies }))
+    setWaves((waves) => ({
+      ...waves,
+      [waveId]: { enemies, scaling: waves[waveId].scaling },
+    }))
+  }
+
+  const setWaveScaling = (waveId: string, scaling: boolean) => {
+    setWaves((waves) => ({
+      ...waves,
+      [waveId]: { enemies: waves[waveId].enemies, scaling },
+    }))
   }
 
   const deleteWave = (waveId: string) => {
@@ -75,12 +93,13 @@ export default function Home({
   }
 
   const encounters = Object.values(waves)
-    .map((enemies) => {
+    .map((wave) => {
       return _encounterCalculator.recalculateDifficulty(
         partyAverageLevel,
         partySize,
-        enemies,
-        allies
+        wave.enemies,
+        allies,
+        wave.scaling
       )
     })
     .reduce(
@@ -139,7 +158,7 @@ export default function Home({
               <button
                 className="btn btn-square btn-sm"
                 onClick={() => {
-                  setWaves({ [v4()]: [] })
+                  setWaves(createInitialWave())
                   setAllies([])
                   setPartyAverageLevel(INITIAL_PARTY_LEVEL)
                   setPartySize(INITIAL_PARTY_SIZE)
@@ -180,15 +199,16 @@ export default function Home({
                 {Object.keys(waves).map((waveId, index, array) => {
                   const wave = waves[waveId]
                   const canDelete = array.length > 1
-                  const { hpLost, resourcesSpent } =
+                  const { hpLost, resourcesSpent, multiplier } =
                     _encounterCalculator.recalculateDifficulty(
                       partyAverageLevel,
                       partySize,
-                      wave,
-                      allies
+                      wave.enemies,
+                      allies,
+                      wave.scaling
                     )
 
-                  const canDuplicate = Boolean(wave.length)
+                  const canDuplicate = Boolean(wave.enemies.length)
 
                   return (
                     <div
@@ -218,7 +238,7 @@ export default function Home({
                               onClick={() =>
                                 setWaves((waves) => ({
                                   ...waves,
-                                  [v4()]: [...wave],
+                                  [v4()]: wave,
                                 }))
                               }
                             >
@@ -229,14 +249,14 @@ export default function Home({
                       </header>
 
                       <Wave
-                        enemies={wave}
+                        enemies={wave.enemies}
                         setEnemies={(ns) => setWaveEnemies(waveId, ns)}
                         addCreature={(n) =>
-                          setWaveEnemies(waveId, [...wave, n])
+                          setWaveEnemies(waveId, [...wave.enemies, n])
                         }
                       />
-                      {array.length > 1 && wave.length > 0 ? (
-                        <aside className="flex gap-1 items-center -mx-4 -mb-4 py-3 px-4 mt-4 border-t border-t-base-200">
+                      {array.length > 1 && wave.enemies.length > 0 ? (
+                        <aside className="flex flex-col gap-1 -mx-4 -mb-4 py-3 px-4 mt-4 border-t border-t-base-200">
                           <div className="grow flex gap-2">
                             <span>
                               HP: <b>{Math.round(hpLost)}%</b>
@@ -247,6 +267,25 @@ export default function Home({
                           </div>
                         </aside>
                       ) : null}
+
+                      {multiplier < 1 && (
+                        <div className="form-control mt-2">
+                          <label className="cursor-pointer label pl-0">
+                            <span className="label-text mr-2">
+                              You&apos;ve added a strong enemy. Do you expect it
+                              to damage only a single player each round?
+                            </span>
+                            <input
+                              type="checkbox"
+                              checked={wave.scaling}
+                              onChange={(event) =>
+                                setWaveScaling(waveId, event.target.checked)
+                              }
+                              className="checkbox checkbox-secondary"
+                            />
+                          </label>
+                        </div>
+                      )}
                     </div>
                   )
                 })}
@@ -255,7 +294,7 @@ export default function Home({
                   onClick={() =>
                     setWaves((waves) => ({
                       ...waves,
-                      [v4()]: [],
+                      ...createInitialWave(),
                     }))
                   }
                 >

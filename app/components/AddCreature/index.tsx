@@ -24,7 +24,10 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
         <select
           className="select select-sm join-item grow"
           value={creature}
-          onChange={(event) => setCreature(event.target.value)}
+          onChange={(event) => {
+            addCreature(Number(event.target.value), creatureToggle)
+            setCreature(EMPTY)
+          }}
         >
           <option value={EMPTY}>
             Choose {creatureToggle ? 'Ally' : 'Enemy'} CR
@@ -35,16 +38,6 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
             </option>
           ))}
         </select>
-        <button
-          className="btn btn-sm btn-square join-item"
-          onClick={() => {
-            addCreature(Number(creature!), creatureToggle)
-            setCreature(EMPTY)
-          }}
-          disabled={creature === EMPTY}
-        >
-          <IconPlus />
-        </button>
       </div>
     </div>
   )
