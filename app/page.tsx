@@ -140,7 +140,7 @@ export default function Home({
         <h1 className="text-3xl mt-6">Challenge Rated</h1>
         <p className="text-lg mt-4">
           An encounter-building tool for determining combat difficulty in
-          Dungeons & Dragons 5th Edition Based on the{' '}
+          Dungeons & Dragons 5th Edition. Based on the{' '}
           <a
             href="https://www.gmbinder.com/share/-N4m46K77hpMVnh7upYa"
             target="_blank"
@@ -149,7 +149,7 @@ export default function Home({
           >
             Challenge Ratings 2.0
           </a>
-          &nbsp;system developed by DragnaCarta.
+          &nbsp;system.
         </p>
         <aside className="mt-10">
           <section>
