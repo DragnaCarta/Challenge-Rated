@@ -273,7 +273,7 @@ export default function Home({
                           <label className="cursor-pointer label pl-0">
                             <span className="label-text mr-2">
                               You&apos;ve added a strong enemy. Do you expect it
-                              to damage only a single player each round?
+                              to focus its damage on only one player each round?
                             </span>
                             <input
                               type="checkbox"
