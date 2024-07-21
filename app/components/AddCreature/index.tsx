@@ -1,6 +1,8 @@
 import ChallengeRatingOptions from '@/app/lib/ChallengeRatingOptions'
+import { sendGAEvent, sendGTMEvent } from '@next/third-parties/google'
 import IconPlus from '@/app/ui/icons/IconPlus'
 import { useState } from 'react'
+import { sendEvent } from '@/app/lib/analytics'
 
 type Props = {
   addCreature: (value: number, toggle: 0 | 1) => void
@@ -27,6 +29,10 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
           onChange={(event) => {
             addCreature(Number(event.target.value), creatureToggle)
             setCreature(EMPTY)
+            sendEvent('creature_added', {
+              value: event.target.value,
+              type: creatureToggle ? 'ally' : 'enemy',
+            })
           }}
         >
           <option value={EMPTY}>

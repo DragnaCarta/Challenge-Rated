@@ -14,7 +14,7 @@ import { IconRefresh } from './ui/icons/IconRefresh'
 import { IconTrash } from './ui/icons/IconTrash'
 import { IconCopy } from './ui/icons/IconCopy'
 import { InfoTooltip } from './components/InfoTooltip'
-import { create } from 'domain'
+import { sendEvent } from './lib/analytics'
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -133,6 +133,13 @@ export default function Home({
     powerToTextColor.find((ptc) => encounters.hpLost.toNumber() <= ptc.max)
       ?.label ?? 'text-neutral'
 
+  const handleRefreshEncounter = () => {
+    setWaves(createInitialWave())
+    setAllies([])
+    setPartyAverageLevel(INITIAL_PARTY_LEVEL)
+    setPartySize(INITIAL_PARTY_SIZE)
+  }
+
   return (
     <section className="max-w-screen-md mx-auto">
       <div className="p-4">
@@ -157,12 +164,7 @@ export default function Home({
               <h2 className="text-2xl">Your Encounter</h2>
               <button
                 className="btn btn-square btn-sm"
-                onClick={() => {
-                  setWaves(createInitialWave())
-                  setAllies([])
-                  setPartyAverageLevel(INITIAL_PARTY_LEVEL)
-                  setPartySize(INITIAL_PARTY_SIZE)
-                }}
+                onClick={() => handleRefreshEncounter()}
               >
                 <IconRefresh />
               </button>
@@ -278,9 +280,10 @@ export default function Home({
                             <input
                               type="checkbox"
                               checked={wave.scaling}
-                              onChange={(event) =>
+                              onChange={(event) => {
+                                sendEvent('click', { value: 'wave_scaling' })
                                 setWaveScaling(waveId, event.target.checked)
-                              }
+                              }}
                               className="checkbox checkbox-secondary"
                             />
                           </label>
@@ -291,12 +294,13 @@ export default function Home({
                 })}
                 <button
                   className="btn btn-sm"
-                  onClick={() =>
+                  onClick={() => {
+                    sendEvent('click', { value: 'add_wave' })
                     setWaves((waves) => ({
                       ...waves,
                       ...createInitialWave(),
                     }))
-                  }
+                  }}
                 >
                   Add New Wave/Phase
                   <IconPlus style={{ height: '1.2rem', width: '1.2rem' }} />

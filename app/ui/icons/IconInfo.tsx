@@ -1,4 +1,4 @@
-import { SVGProps } from 'react';
+import { SVGProps } from 'react'
 
 export function IconInfo(props: SVGProps<SVGSVGElement>) {
   return (
@@ -13,10 +13,10 @@ export function IconInfo(props: SVGProps<SVGSVGElement>) {
       <path
         d="M12 16V12M12 8H12.01M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
         stroke="white"
-        stroke-width="1.6"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
-  );
+  )
 }

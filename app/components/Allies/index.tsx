@@ -2,6 +2,7 @@ import PartyLevelOptions from '@/app/lib/PartyLevelOptions'
 import PartySizeOptions from '@/app/lib/PartySizeOptions'
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
+import { sendEvent } from '@/app/lib/analytics'
 
 type Props = {
   partySize: number
@@ -31,6 +32,7 @@ export function Allies({
   {})
 
   function addAlly(challengeRating: number) {
+    sendEvent('creature_added', { value: challengeRating, type: 'ally' })
     setAllies([...allies, challengeRating])
   }
 
@@ -58,7 +60,10 @@ export function Allies({
           <select
             value={partySize}
             className="select select-sm"
-            onChange={(event) => setPartySize(Number(event.target.value))}
+            onChange={(event) => {
+              sendEvent('party_size_changed', { value: event.target.value })
+              setPartySize(Number(event.target.value))
+            }}
           >
             {PartySizeOptions.map((pso) => (
               <option key={pso.displayText} value={pso.value}>
@@ -80,6 +85,7 @@ export function Allies({
               if (!Boolean(partySize)) {
                 setPartySize(1)
               }
+              sendEvent('party_level_changed', { value: event.target.value })
               setPartyAverageLevel(Number(event.target.value))
             }}
           >

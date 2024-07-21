@@ -1,6 +1,7 @@
 import { useId } from 'react'
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
+import { sendEvent } from '@/app/lib/analytics'
 
 type Props = {
   enemies: number[]
@@ -10,6 +11,7 @@ type Props = {
 
 export function Wave({ enemies, setEnemies, addCreature }: Props) {
   function addEnemy(challengeRating: number) {
+    sendEvent('creature_added', { value: challengeRating, type: 'enemy' })
     setEnemies([...enemies, challengeRating])
   }
 
