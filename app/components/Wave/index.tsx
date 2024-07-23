@@ -19,8 +19,8 @@ export function Wave({ enemies, setEnemies, addCreature }: Props) {
     const index = enemies.indexOf(challengeRating)
 
     if (index > -1) {
-      enemies.splice(index, 1)
-      setEnemies([...enemies])
+      const newEnemies = enemies.filter((_, idx) => idx !== index)
+      setEnemies([...newEnemies])
     }
   }
 

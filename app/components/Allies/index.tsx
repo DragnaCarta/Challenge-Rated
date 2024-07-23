@@ -39,8 +39,8 @@ export function Allies({
   function removeAlly(challengeRating: number) {
     const index = allies.indexOf(challengeRating)
     if (index > -1) {
-      allies.splice(index, 1)
-      setAllies([...allies])
+      const newAllies = allies.filter((_, idx) => idx !== index)
+      setAllies([...newAllies])
     }
   }
 
