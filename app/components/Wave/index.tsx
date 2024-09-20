@@ -2,11 +2,12 @@ import { useId } from 'react'
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
+import {calculateOccurrences} from "@/app/utils";
 
 type Props = {
   enemies: number[]
   setEnemies: (ns: number[]) => void
-  addCreature: (value: number, toggle: 0 | 1) => void
+  addCreature: (value: number, toggle: 0 | 1 | 2) => void
 }
 
 export function Wave({ enemies, setEnemies, addCreature }: Props) {
@@ -31,13 +32,7 @@ export function Wave({ enemies, setEnemies, addCreature }: Props) {
     return setEnemies(predicate(enemies))
   }
 
-  const enemyCrOccurrences = enemies.reduce(function (
-    acc: Record<number, number>,
-    curr
-  ) {
-    return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
-  },
-  {})
+  const enemyCrOccurrences = calculateOccurrences(enemies)
 
   const keys = Object.keys(enemyCrOccurrences)
     .slice()

@@ -4,9 +4,23 @@ import IconPlus from '@/app/ui/icons/IconPlus'
 import { useState } from 'react'
 import { sendEvent } from '@/app/lib/analytics'
 
+
+function getCreatureType(creatureToggle: 0 | 1 | 2): string {
+    switch (creatureToggle) {
+        case 1:
+            return 'Ally';
+        case 0:
+            return 'Enemy';
+        case 2:
+            return 'Party Member';
+        default:
+            return 'Unknown';
+    }
+}
+
 type Props = {
-  addCreature: (value: number, toggle: 0 | 1) => void
-  creatureToggle: 0 | 1
+  addCreature: (value: number, toggle: 0 | 1 | 2) => void
+  creatureToggle: 0 | 1 | 2
   unit?: string
 }
 const EMPTY = 'empty'
@@ -20,7 +34,7 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
           className="btn btn-sm join-item cursor-default animate-none"
           tabIndex={-1}
         >
-          Add {creatureToggle ? 'Ally' : 'Enemy'}{' '}
+          Add {getCreatureType(creatureToggle)}{' '}
         </div>
 
         <select
@@ -31,12 +45,12 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
             setCreature(EMPTY)
             sendEvent('creature_added', {
               value: event.target.value,
-              type: creatureToggle ? 'ally' : 'enemy',
+              type: getCreatureType(creatureToggle),
             })
           }}
         >
           <option value={EMPTY}>
-            Choose {creatureToggle ? 'Ally' : 'Enemy'} CR
+            Choose {getCreatureType(creatureToggle)} CR
           </option>
           {ChallengeRatingOptions.map((cr) => (
             <option key={cr.displayText} value={cr.value}>

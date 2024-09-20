@@ -58,6 +58,7 @@ export default function Home({
       ? Number(searchParams?.partySize)
       : INITIAL_PARTY_SIZE
   )
+
   const [partyAverageLevel, setPartyAverageLevel] = useState(
     searchParams?.partyAverageLevel !== undefined
       ? Number(searchParams?.partyAverageLevel)
@@ -66,8 +67,13 @@ export default function Home({
 
   const [allies, setAllies] = useState<number[]>([])
 
-  function addCreature(challengeRating: number) {
-    setAllies([...allies, challengeRating])
+  // Add state for party members
+  const [partyMembers, setPartyMembers] = useState<number[]>([])
+
+  // Function to add a new party member with a CR (Challenge Rating)
+  function addPartyMember(challengeRating: number) {
+    sendEvent('party_member_added', { value: challengeRating, type: 'party' })
+    setPartyMembers([...partyMembers, challengeRating])
   }
 
   const setWaveEnemies = (waveId: string, enemies: number[]) => {
@@ -95,11 +101,10 @@ export default function Home({
   const encounters = Object.values(waves)
     .map((wave) => {
       return _encounterCalculator.recalculateDifficulty(
-        partyAverageLevel,
-        partySize,
-        wave.enemies,
-        allies,
-        wave.scaling
+          {enemyChallengeRatings: wave.enemies,
+          allyChallengeRatings: allies,
+          partyChallengeRatings: partyMembers,
+          accountForPowerDecay: wave.scaling}
       )
     })
     .reduce(
@@ -186,10 +191,11 @@ export default function Home({
                     allies={allies}
                     setAllies={setAllies}
                     partySize={partySize}
-                    addCreature={addCreature}
                     setPartySize={setPartySize}
                     partyAverageLevel={partyAverageLevel}
                     setPartyAverageLevel={setPartyAverageLevel}
+                    partyMembers={partyMembers}
+                    setPartyMembers={setPartyMembers}
                   />
                 </div>
               </div>
@@ -203,11 +209,12 @@ export default function Home({
                   const canDelete = array.length > 1
                   const { hpLost, resourcesSpent, multiplier } =
                     _encounterCalculator.recalculateDifficulty(
-                      partyAverageLevel,
-                      partySize,
-                      wave.enemies,
-                      allies,
-                      wave.scaling
+                        {
+                          enemyChallengeRatings: wave.enemies,
+                          allyChallengeRatings: allies,
+                          partyChallengeRatings: partyMembers,
+                          accountForPowerDecay: wave.scaling
+                        }
                     )
 
                   const canDuplicate = Boolean(wave.enemies.length)
