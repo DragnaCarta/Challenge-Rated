@@ -172,9 +172,9 @@ class EncounterCalculator {
         accountForPowerDecay: boolean
       } ) {
     // Step 1: Scale the Power of each enemy and each ally.
-    let totalEnemyPower = 0
-    let totalAllyPower = 0
-    let totalPartyPower = 0
+    let totalEnemyPower: number
+    let totalAllyPower: number
+    let totalPartyPower: number
 
     const enemyCrOccurrences = calculateOccurrences(enemyChallengeRatings)
 
@@ -285,7 +285,7 @@ const _findClosestRatio = function (
   for (const { ratio, multiplier } of ratioTable) {
     const difference = Math.abs(targetRatio - ratio)
 
-    // Update closest values if a closer ratio is found.
+    // Update the closest values if a closer ratio is found.
     if (difference < smallestDifference) {
       closestRatio = ratio
       closestMultiplier = multiplier

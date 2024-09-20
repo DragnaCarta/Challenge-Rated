@@ -7,6 +7,7 @@ export function calculateOccurrences(challengeRatings: number[]): Record<number,
         acc: Record<number, number>,
         curr: number
     ) {
-        return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc;
+        acc[curr] ? ++acc[curr] : (acc[curr] = 1);
+        return acc;
     }, {});
 }

@@ -70,12 +70,6 @@ export default function Home({
   // Add state for party members
   const [partyMembers, setPartyMembers] = useState<number[]>([])
 
-  // Function to add a new party member with a CR (Challenge Rating)
-  function addPartyMember(challengeRating: number) {
-    sendEvent('party_member_added', { value: challengeRating, type: 'party' })
-    setPartyMembers([...partyMembers, challengeRating])
-  }
-
   const setWaveEnemies = (waveId: string, enemies: number[]) => {
     setWaves((waves) => ({
       ...waves,

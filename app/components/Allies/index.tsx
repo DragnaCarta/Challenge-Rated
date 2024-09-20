@@ -1,5 +1,3 @@
-import PartyLevelOptions from '@/app/lib/PartyLevelOptions'
-import PartySizeOptions from '@/app/lib/PartySizeOptions'
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
