@@ -201,7 +201,7 @@ export default function Home({
                 {Object.keys(waves).map((waveId, index, array) => {
                   const wave = waves[waveId]
                   const canDelete = array.length > 1
-                  const { hpLost, resourcesSpent, multiplier } =
+                  const { hpLost, resourcesSpent } =
                     _encounterCalculator.recalculateDifficulty(
                         {
                           enemyChallengeRatings: wave.enemies,
@@ -271,25 +271,25 @@ export default function Home({
                         </aside>
                       ) : null}
 
-                      {multiplier < 1 && (
-                        <div className="form-control mt-2">
-                          <label className="cursor-pointer label pl-0">
-                            <span className="label-text mr-2">
-                              You&apos;ve added a strong enemy. Do you expect it
-                              to focus its damage on only one player each round?
-                            </span>
-                            <input
-                              type="checkbox"
-                              checked={wave.scaling}
-                              onChange={(event) => {
-                                sendEvent('click', { value: 'wave_scaling' })
-                                setWaveScaling(waveId, event.target.checked)
-                              }}
-                              className="checkbox checkbox-secondary"
-                            />
-                          </label>
-                        </div>
-                      )}
+                      {/*{multiplier < 1 && (*/}
+                      {/*  <div className="form-control mt-2">*/}
+                      {/*    <label className="cursor-pointer label pl-0">*/}
+                      {/*      <span className="label-text mr-2">*/}
+                      {/*        You&apos;ve added a strong enemy. Do you expect it*/}
+                      {/*        to focus its damage on only one player each round?*/}
+                      {/*      </span>*/}
+                      {/*      <input*/}
+                      {/*        type="checkbox"*/}
+                      {/*        checked={wave.scaling}*/}
+                      {/*        onChange={(event) => {*/}
+                      {/*          sendEvent('click', { value: 'wave_scaling' })*/}
+                      {/*          setWaveScaling(waveId, event.target.checked)*/}
+                      {/*        }}*/}
+                      {/*        className="checkbox checkbox-secondary"*/}
+                      {/*      />*/}
+                      {/*    </label>*/}
+                      {/*  </div>*/}
+                      {/*)}*/}
                     </div>
                   )
                 })}
