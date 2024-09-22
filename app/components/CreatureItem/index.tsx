@@ -3,6 +3,7 @@ import Fraction from 'fraction.js'
 import IconMinus from '@/app/ui/icons/IconMinus'
 import IconPlus from '@/app/ui/icons/IconPlus'
 import { IconTrash } from '@/app/ui/icons/IconTrash'
+import {creatureHasCRorLevel} from "@/app/utils";
 
 type CreatureListItemProps = {
   challengeRating: number
@@ -10,6 +11,7 @@ type CreatureListItemProps = {
   increaseCount: (challengeRating: number) => void
   decreaseCount: (challengeRating: number) => void
   onClear: () => void
+  creatureToggle: 0 | 1 | 2
 }
 
 export function CreatureItem({
@@ -18,6 +20,7 @@ export function CreatureItem({
   increaseCount,
   decreaseCount,
   onClear,
+  creatureToggle,
 }: CreatureListItemProps) {
   const crDisplay = new Fraction(challengeRating).toFraction(true)
 
@@ -27,7 +30,7 @@ export function CreatureItem({
       style={{ gridTemplateColumns: '1fr 0fr' }}
     >
       <p className="inline-flex items-center rounded-md grow gap-2">
-        CR: {crDisplay}
+        {creatureHasCRorLevel(creatureToggle)}: {crDisplay}
         <button
           className="btn btn-xs btn-square btn-neutral text-error"
           onClick={() => onClear()}

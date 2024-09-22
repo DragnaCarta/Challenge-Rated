@@ -1,7 +1,7 @@
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
-import {calculateOccurrences} from "@/app/utils";
+import {ALLY_CREATURE_TOGGLE, calculateOccurrences, PARTY_MEMBER_CREATURE_TOGGLE} from "@/app/utils";
 
 type Props = {
   partySize: number
@@ -21,7 +21,7 @@ export function Allies({
     setPartyMembers,}: Props) {
   const allyCrOccurrences = calculateOccurrences(allies)
 
-  const partyCrOccurrences = calculateOccurrences(partyMembers)
+  const partyLevelOccurrences = calculateOccurrences(partyMembers)
 
   function addAlly(challengeRating: number) {
     sendEvent('creature_added', { value: challengeRating, type: 'ally' })
@@ -76,12 +76,12 @@ export function Allies({
         <AddCreature addCreature={addPartyMember} creatureToggle={2} />
 
         {/* Render party members */}
-        {Object.keys(partyCrOccurrences)
+        {Object.keys(partyLevelOccurrences)
             .map((x) => parseFloat(x))
             .slice()
             .sort((a, b) => b - a)
             .map((cr) => {
-              const crCount = partyCrOccurrences[cr]
+              const crCount = partyLevelOccurrences[cr]
               return (
                   <CreatureItem
                       key={cr}
@@ -90,13 +90,14 @@ export function Allies({
                       increaseCount={(cr) => addPartyMember(cr)}
                       decreaseCount={(cr) => removePartyMember(cr)}
                       onClear={clearPartyOccurrences(cr, 1)}
+                      creatureToggle={PARTY_MEMBER_CREATURE_TOGGLE}
                   />
               )
             })}
       </div>
 
 
-      <AddCreature addCreature={addAlly} creatureToggle={1} />
+      <AddCreature addCreature={addAlly} creatureToggle={ALLY_CREATURE_TOGGLE} />
 
       <div className="flex flex-col gap-2 my-4 grow">
         {Object.keys(allyCrOccurrences)
@@ -113,6 +114,7 @@ export function Allies({
                 increaseCount={(cr) => addAlly(cr)}
                 decreaseCount={(cr) => removeAlly(cr)}
                 onClear={clearOccurences(cr, 1)}
+                creatureToggle={ALLY_CREATURE_TOGGLE}
               />
             )
           })}

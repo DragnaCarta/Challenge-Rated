@@ -1,28 +1,26 @@
-import ChallengeRatingOptions from '@/app/lib/ChallengeRatingOptions'
-import { sendGAEvent, sendGTMEvent } from '@next/third-parties/google'
-import IconPlus from '@/app/ui/icons/IconPlus'
 import { useState } from 'react'
 import { sendEvent } from '@/app/lib/analytics'
-
-
-function getCreatureType(creatureToggle: 0 | 1 | 2): string {
-    switch (creatureToggle) {
-        case 1:
-            return 'Ally';
-        case 0:
-            return 'Enemy';
-        case 2:
-            return 'Party Member';
-        default:
-            return 'Unknown';
-    }
-}
+import {creatureHasCRorLevel, getCreatureType, PARTY_MEMBER_CREATURE_TYPE} from "@/app/utils";
+import {RadioOption} from "@/app/lib/types";
+import PartyLevelOptions from "@/app/lib/PartyLevelOptions";
+import ChallengeRatingOptions from "@/app/lib/ChallengeRatingOptions";
 
 type Props = {
   addCreature: (value: number, toggle: 0 | 1 | 2) => void
   creatureToggle: 0 | 1 | 2
   unit?: string
 }
+
+
+function getCreatureOptions(creatureType: string): RadioOption[] {
+    switch (creatureType) {
+        case PARTY_MEMBER_CREATURE_TYPE:
+            return PartyLevelOptions
+        default:
+            return ChallengeRatingOptions
+    }
+}
+
 const EMPTY = 'empty'
 export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
   const [creature, setCreature] = useState(EMPTY)
@@ -50,11 +48,11 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
           }}
         >
           <option value={EMPTY}>
-            Choose {getCreatureType(creatureToggle)} CR
+            Choose {getCreatureType(creatureToggle)} {creatureHasCRorLevel(creatureToggle)}
           </option>
-          {ChallengeRatingOptions.map((cr) => (
+          {getCreatureOptions(getCreatureType(creatureToggle)).map((cr) => (
             <option key={cr.displayText} value={cr.value}>
-              CR {cr.displayText}
+                {creatureHasCRorLevel(creatureToggle)} {cr.displayText}
             </option>
           ))}
         </select>

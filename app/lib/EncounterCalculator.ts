@@ -138,13 +138,15 @@ class EncounterCalculator {
   }
 
   // Utility function to calculate total enemy power based on enemy CR occurrences
-  static calculateTotalPower(enemyCrOccurrences: Record<number, number>): number {
+  static calculateTotalPower(
+      {creatureOccurrences, powerTable} :
+      {creatureOccurrences: Record<number, number>, powerTable: Record<number, number>}): number {
     let totalEnemyPower = 0;
 
-    Object.keys(enemyCrOccurrences).forEach(function (cr) {
+    Object.keys(creatureOccurrences).forEach(function (cr) {
       const enemyChallengeRating = parseFloat(cr); // Convert CR to number
-      const enemiesWithChallengeRating = enemyCrOccurrences[enemyChallengeRating]; // Number of enemies with that CR
-      const enemyPower = EncounterCalculator.CRPowerLookup[enemyChallengeRating]; // Get the power of this CR
+      const enemiesWithChallengeRating = creatureOccurrences[enemyChallengeRating]; // Number of enemies with that CR
+      const enemyPower = powerTable[enemyChallengeRating]; // Get the power of this CR
 
       // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
       // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
@@ -156,6 +158,7 @@ class EncounterCalculator {
     return totalEnemyPower;
   }
 
+
   /**
    * Recalculates the encounter difficulty based on current Party and Encounter states.
    */
@@ -163,12 +166,12 @@ class EncounterCalculator {
       {
         enemyChallengeRatings,
         allyChallengeRatings,
-        partyChallengeRatings,
+        partyLevels,
         accountForPowerDecay
       } : {
         enemyChallengeRatings: number[],
         allyChallengeRatings: number[],
-        partyChallengeRatings: number[],
+        partyLevels: number[],
         accountForPowerDecay: boolean
       } ) {
     // Step 1: Scale the Power of each enemy and each ally.
@@ -180,14 +183,17 @@ class EncounterCalculator {
 
     const allyCrOccurrences = calculateOccurrences(allyChallengeRatings)
 
-    const partyCrOccurrences = calculateOccurrences(partyChallengeRatings)
+    const partyLevelOccurrences = calculateOccurrences(partyLevels)
 
     // Assuming CRPowerLookup, LevelPowerLookup, and RatioScaleLookup are your lookup tables
-    totalEnemyPower = EncounterCalculator.calculateTotalPower(enemyCrOccurrences)
+    totalEnemyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: enemyCrOccurrences,
+      powerTable: EncounterCalculator.CRPowerLookup})
 
-    totalAllyPower = EncounterCalculator.calculateTotalPower(allyCrOccurrences)
+    totalAllyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: allyCrOccurrences,
+      powerTable: EncounterCalculator.CRPowerLookup})
 
-    totalPartyPower = EncounterCalculator.calculateTotalPower(partyCrOccurrences)
+    totalPartyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: partyLevelOccurrences,
+      powerTable: EncounterCalculator.LevelPowerLookup})
 
     let totalFriendlyPower = Big(totalPartyPower).plus(Big(totalAllyPower))
 

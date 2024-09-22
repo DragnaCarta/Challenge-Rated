@@ -97,7 +97,7 @@ export default function Home({
       return _encounterCalculator.recalculateDifficulty(
           {enemyChallengeRatings: wave.enemies,
           allyChallengeRatings: allies,
-          partyChallengeRatings: partyMembers,
+          partyLevels: partyMembers,
           accountForPowerDecay: wave.scaling}
       )
     })
@@ -206,7 +206,7 @@ export default function Home({
                         {
                           enemyChallengeRatings: wave.enemies,
                           allyChallengeRatings: allies,
-                          partyChallengeRatings: partyMembers,
+                          partyLevels: partyMembers,
                           accountForPowerDecay: wave.scaling
                         }
                     )
