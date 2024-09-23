@@ -2,6 +2,8 @@ import Fraction from 'fraction.js'
 import multipliers from './multipliers.json'
 import Big from 'big.js'
 import {calculateOccurrences} from "@/app/utils";
+import {median} from "simple-statistics"
+import {INITIAL_PARTY_LEVEL} from "@/app/lib/PartyLevelOptions";
 /**
  * EncounterCalculator.js
  *
@@ -195,14 +197,24 @@ class EncounterCalculator {
     totalPartyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: partyLevelOccurrences,
       powerTable: EncounterCalculator.LevelPowerLookup})
 
-    let totalFriendlyPower = Big(totalPartyPower).plus(Big(totalAllyPower))
 
-    // const maxCr = enemyChallengeRatings.reduce(
-    //   (max, cr) => Math.max(max, cr),
-    //   0
-    // )
+    const maxCr = enemyChallengeRatings.reduce(
+        (max, cr) => Math.max(max, cr),
+        0
+    )
 
-    // const multiplier = this.getMultiplier(partyLevel, maxCr)
+    let multiplier: Big
+    if (totalPartyPower + totalAllyPower !== 0) {
+      const medianPartyLevel = median(partyLevels)
+      multiplier = this.getMultiplier(medianPartyLevel, maxCr)
+    } else {
+      multiplier = Big(1)
+    }
+
+    const bigTotalPartyPower = (accountForPowerDecay ? multiplier : Big(1)).times(Big(totalPartyPower))
+
+    let totalFriendlyPower = bigTotalPartyPower.plus(Big(totalAllyPower))
+
 
     // Step 3: Calculate difficulty.
     // These are the same things?
@@ -212,7 +224,7 @@ class EncounterCalculator {
     // const difficulty = Math.round(100 * Math.pow(totalEnemyPower / totalPartyAndAllyPower, 2));
 
     const difficulty =
-        (totalFriendlyPower.eq(0) ? 20 : Big(totalEnemyPower)
+        (totalFriendlyPower.eq(0) ? 0 : Big(totalEnemyPower)
       .div(
           totalFriendlyPower
       )
@@ -246,10 +258,11 @@ class EncounterCalculator {
       hpLost,
       resourcesSpent,
       encounterDifficulty,
+      multiplier: multiplier.toNumber(),
     }
   }
   // Function to retrieve the power multiplier based on player level and highest CR
-  private getMultiplier(playerLevel: number, highestCr: number): Big {
+  private getMultiplier(medianPlayerLevel: number, highestCr: number): Big {
     const highestCrFraction = new Fraction(highestCr).toFraction(true)
     const crKey = highestCrFraction // Construct the CR key as it appears in the dictionary
 
@@ -258,7 +271,7 @@ class EncounterCalculator {
     if (!levels) {
       throw new Error('Invalid CR provided.')
     }
-    const multiplier = levels[playerLevel]
+    const multiplier = levels[medianPlayerLevel]
     if (multiplier === undefined) {
       throw new Error('Invalid player level provided.')
     }
