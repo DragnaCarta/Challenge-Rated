@@ -205,7 +205,7 @@ class EncounterCalculator {
 
     let multiplier: Big
     if (totalPartyPower + totalAllyPower !== 0) {
-      const medianPartyLevel = median(partyLevels)
+      const medianPartyLevel = Math.ceil(median(partyLevels))
       multiplier = this.getMultiplier(medianPartyLevel, maxCr)
     } else {
       multiplier = Big(1)
@@ -271,6 +271,7 @@ class EncounterCalculator {
     if (!levels) {
       throw new Error('Invalid CR provided.')
     }
+
     const multiplier = levels[medianPlayerLevel]
     if (multiplier === undefined) {
       throw new Error('Invalid player level provided.')

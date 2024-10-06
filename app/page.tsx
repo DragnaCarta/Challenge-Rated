@@ -140,7 +140,7 @@ export default function Home({
   }
 
   return (
-    <section className="max-w-screen-md mx-auto">
+    <section className="max-w-screen-lg mx-auto">
       <div className="p-4">
         {/* <Banner /> */}
         <h1 className="text-3xl mt-6">Challenge Rated</h1>
@@ -170,7 +170,7 @@ export default function Home({
             </div>
 
             <div
-              className="w-full mt-6 md:grid"
+              className="w-full mt-6 lg:grid"
               style={{ gridTemplateColumns: '1fr auto 1fr' }}
             >
               <div
