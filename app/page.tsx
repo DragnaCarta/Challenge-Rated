@@ -180,7 +180,7 @@ export default function Home({
                     'repeating-linear-gradient(45deg, transparent, transparent 13px, var(--fallback-b2, oklch(var(--b1))) 13px, var(--fallback-b2, oklch(var(--b1))) 14px)',
                 }}
               >
-                <div className="card textarea-info flex flex-col border border-base-200 bg-neutral p-4 shadow-lg">
+                <div className="card textarea-info flex flex-col border border-base-200 bg-neutral p-4 shadow-lg w-full">
                   <Allies
                     allies={allies}
                     setAllies={setAllies}

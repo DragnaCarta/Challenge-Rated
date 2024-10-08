@@ -3,7 +3,6 @@ import multipliers from './multipliers.json'
 import Big from 'big.js'
 import {calculateOccurrences} from "@/app/utils";
 import {median} from "simple-statistics"
-import {INITIAL_PARTY_LEVEL} from "@/app/lib/PartyLevelOptions";
 /**
  * EncounterCalculator.js
  *

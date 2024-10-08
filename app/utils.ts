@@ -1,7 +1,3 @@
-import {RadioOption} from "@/app/lib/types";
-import PartyLevelOptions from "@/app/lib/PartyLevelOptions";
-import ChallengeRatingOptions from "@/app/lib/ChallengeRatingOptions";
-
 export const ENEMY_CREATURE_TOGGLE = 0
 export const ENEMY_CREATURE_TYPE = 'Enemy'
 export const ALLY_CREATURE_TOGGLE = 1

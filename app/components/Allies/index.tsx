@@ -61,7 +61,7 @@ export function Allies({
   }
 
 // Function to clear all occurrences of a specific CR from party members
-  function clearPartyOccurrences(cr: number, creatureToggle: 1) {
+  function clearPartyOccurrences(cr: number, creatureToggle: 0 | 1 | 2) {
     const predicate = (creatures: number[]) =>
         creatures.filter((creature) => creature !== cr);  // Predicate to filter out all CRs
 
@@ -89,7 +89,7 @@ export function Allies({
                       count={crCount}
                       increaseCount={(cr) => addPlayer(cr)}
                       decreaseCount={(cr) => removePlayer(cr)}
-                      onClear={clearPartyOccurrences(cr, 1)}
+                      onClear={clearPartyOccurrences(cr, PLAYER_CREATURE_TOGGLE)}
                       creatureToggle={PLAYER_CREATURE_TOGGLE}
                   />
               )
