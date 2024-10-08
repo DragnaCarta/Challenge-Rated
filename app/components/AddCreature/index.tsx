@@ -1,14 +1,26 @@
-import ChallengeRatingOptions from '@/app/lib/ChallengeRatingOptions'
-import { sendGAEvent, sendGTMEvent } from '@next/third-parties/google'
-import IconPlus from '@/app/ui/icons/IconPlus'
 import { useState } from 'react'
 import { sendEvent } from '@/app/lib/analytics'
+import {creatureHasCRorLevel, getCreatureType, PLAYER_MEMBER_CREATURE_TYPE} from "@/app/utils";
+import {RadioOption} from "@/app/lib/types";
+import PartyLevelOptions from "@/app/lib/PartyLevelOptions";
+import ChallengeRatingOptions from "@/app/lib/ChallengeRatingOptions";
 
 type Props = {
-  addCreature: (value: number, toggle: 0 | 1) => void
-  creatureToggle: 0 | 1
+  addCreature: (value: number, toggle: 0 | 1 | 2) => void
+  creatureToggle: 0 | 1 | 2
   unit?: string
 }
+
+
+function getCreatureOptions(creatureType: string): RadioOption[] {
+    switch (creatureType) {
+        case PLAYER_MEMBER_CREATURE_TYPE:
+            return PartyLevelOptions
+        default:
+            return ChallengeRatingOptions
+    }
+}
+
 const EMPTY = 'empty'
 export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
   const [creature, setCreature] = useState(EMPTY)
@@ -20,7 +32,7 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
           className="btn btn-sm join-item cursor-default animate-none"
           tabIndex={-1}
         >
-          Add {creatureToggle ? 'Ally' : 'Enemy'}{' '}
+          Add {getCreatureType(creatureToggle)}{' '}
         </div>
 
         <select
@@ -31,16 +43,16 @@ export function AddCreature({ addCreature, creatureToggle, unit }: Props) {
             setCreature(EMPTY)
             sendEvent('creature_added', {
               value: event.target.value,
-              type: creatureToggle ? 'ally' : 'enemy',
+              type: getCreatureType(creatureToggle),
             })
           }}
         >
           <option value={EMPTY}>
-            Choose {creatureToggle ? 'Ally' : 'Enemy'} CR
+            Choose {getCreatureType(creatureToggle)} {creatureHasCRorLevel(creatureToggle)}
           </option>
-          {ChallengeRatingOptions.map((cr) => (
+          {getCreatureOptions(getCreatureType(creatureToggle)).map((cr) => (
             <option key={cr.displayText} value={cr.value}>
-              CR {cr.displayText}
+                {creatureHasCRorLevel(creatureToggle)} {cr.displayText}
             </option>
           ))}
         </select>

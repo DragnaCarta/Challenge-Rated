@@ -1,35 +1,27 @@
-import PartyLevelOptions from '@/app/lib/PartyLevelOptions'
-import PartySizeOptions from '@/app/lib/PartySizeOptions'
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
+import {ALLY_CREATURE_TOGGLE, calculateOccurrences, PLAYER_CREATURE_TOGGLE} from "@/app/utils";
 
 type Props = {
   partySize: number
   partyAverageLevel: number
   allies: number[]
   setAllies: (ns: number[]) => void
+  players: number[]
+  setPlayers: (ns: number[]) => void
   setPartyAverageLevel: (n: number) => void
   setPartySize: (n: number) => void
-  addCreature: (cr: number, toggle: 0 | 1) => void
 }
 
 export function Allies({
-  partySize,
-  setPartySize,
-  allies,
-  setAllies,
-  partyAverageLevel,
-  setPartyAverageLevel,
-  addCreature,
-}: Props) {
-  const allyCrOccurrences = allies.reduce(function (
-    acc: Record<number, number>,
-    curr
-  ) {
-    return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
-  },
-  {})
+    allies,
+    setAllies,
+    players,
+    setPlayers,}: Props) {
+  const allyCrOccurrences = calculateOccurrences(allies)
+
+  const partyLevelOccurrences = calculateOccurrences(players)
 
   function addAlly(challengeRating: number) {
     sendEvent('creature_added', { value: challengeRating, type: 'ally' })
@@ -53,50 +45,59 @@ export function Allies({
     }
   }
 
+  // Add function to manage party members, similar to allies
+  function addPlayer(challengeRating: number) {
+    sendEvent('player_added', { value: challengeRating, type: 'party' })
+    setPlayers([...players, challengeRating])
+  }
+
+  // Function to remove a specific party member (by CR)
+  function removePlayer(challengeRating: number) {
+    const index = players.indexOf(challengeRating);  // Find index of the CR
+    if (index > -1) {
+      const newPlayers = players.filter((_, idx) => idx !== index); // Filter out
+      setPlayers([...newPlayers]);  // Update the state
+    }
+  }
+
+// Function to clear all occurrences of a specific CR from party members
+  function clearPartyOccurrences(cr: number, creatureToggle: 0 | 1 | 2) {
+    const predicate = (creatures: number[]) =>
+        creatures.filter((creature) => creature !== cr);  // Predicate to filter out all CRs
+
+    return function () {
+      return setPlayers(predicate(players));  // Update players using the predicate
+    }
+  }
+
   return (
     <>
-      <div className="flex items-center gap-4">
-        <label className="form-control">
-          <select
-            value={partySize}
-            className="select select-sm"
-            onChange={(event) => {
-              sendEvent('party_size_changed', { value: event.target.value })
-              setPartySize(Number(event.target.value))
-            }}
-          >
-            {PartySizeOptions.map((pso) => (
-              <option key={pso.displayText} value={pso.value}>
-                {pso.displayText}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="flex flex-col gap-2 my-4 grow">
+        <AddCreature addCreature={addPlayer} creatureToggle={2} />
 
-        <div className="inline-flex items-center">
-          {partySize === 1 ? 'player' : 'players'} of level&nbsp;
-        </div>
-
-        <label className="form-control">
-          <select
-            value={partyAverageLevel}
-            className="select select-sm"
-            onChange={(event) => {
-              if (!Boolean(partySize)) {
-                setPartySize(1)
-              }
-              sendEvent('party_level_changed', { value: event.target.value })
-              setPartyAverageLevel(Number(event.target.value))
-            }}
-          >
-            {PartyLevelOptions.map((pso) => (
-              <option key={pso.displayText} value={pso.value}>
-                {pso.displayText}
-              </option>
-            ))}
-          </select>
-        </label>
+        {/* Render party members */}
+        {Object.keys(partyLevelOccurrences)
+            .map((x) => parseFloat(x))
+            .slice()
+            .sort((a, b) => b - a)
+            .map((cr) => {
+              const crCount = partyLevelOccurrences[cr]
+              return (
+                  <CreatureItem
+                      key={cr}
+                      challengeRating={cr}
+                      count={crCount}
+                      increaseCount={(cr) => addPlayer(cr)}
+                      decreaseCount={(cr) => removePlayer(cr)}
+                      onClear={clearPartyOccurrences(cr, PLAYER_CREATURE_TOGGLE)}
+                      creatureToggle={PLAYER_CREATURE_TOGGLE}
+                  />
+              )
+            })}
       </div>
+
+
+      <AddCreature addCreature={addAlly} creatureToggle={ALLY_CREATURE_TOGGLE} />
 
       <div className="flex flex-col gap-2 my-4 grow">
         {Object.keys(allyCrOccurrences)
@@ -113,12 +114,11 @@ export function Allies({
                 increaseCount={(cr) => addAlly(cr)}
                 decreaseCount={(cr) => removeAlly(cr)}
                 onClear={clearOccurences(cr, 1)}
+                creatureToggle={ALLY_CREATURE_TOGGLE}
               />
             )
           })}
       </div>
-
-      <AddCreature addCreature={addCreature} creatureToggle={1} />
     </>
   )
 }

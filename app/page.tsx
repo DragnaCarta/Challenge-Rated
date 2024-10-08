@@ -58,6 +58,7 @@ export default function Home({
       ? Number(searchParams?.partySize)
       : INITIAL_PARTY_SIZE
   )
+
   const [partyAverageLevel, setPartyAverageLevel] = useState(
     searchParams?.partyAverageLevel !== undefined
       ? Number(searchParams?.partyAverageLevel)
@@ -66,9 +67,8 @@ export default function Home({
 
   const [allies, setAllies] = useState<number[]>([])
 
-  function addCreature(challengeRating: number) {
-    setAllies([...allies, challengeRating])
-  }
+  // Add state for party members
+  const [players, setPlayers] = useState<number[]>([])
 
   const setWaveEnemies = (waveId: string, enemies: number[]) => {
     setWaves((waves) => ({
@@ -95,11 +95,10 @@ export default function Home({
   const encounters = Object.values(waves)
     .map((wave) => {
       return _encounterCalculator.recalculateDifficulty(
-        partyAverageLevel,
-        partySize,
-        wave.enemies,
-        allies,
-        wave.scaling
+          {enemyChallengeRatings: wave.enemies,
+          allyChallengeRatings: allies,
+          partyLevels: players,
+          accountForPowerDecay: wave.scaling}
       )
     })
     .reduce(
@@ -141,7 +140,7 @@ export default function Home({
   }
 
   return (
-    <section className="max-w-screen-md mx-auto">
+    <section className="max-w-screen-lg mx-auto">
       <div className="p-4">
         {/* <Banner /> */}
         <h1 className="text-3xl mt-6">Challenge Rated</h1>
@@ -171,7 +170,7 @@ export default function Home({
             </div>
 
             <div
-              className="w-full mt-6 md:grid"
+              className="w-full mt-6 lg:grid"
               style={{ gridTemplateColumns: '1fr auto 1fr' }}
             >
               <div
@@ -181,15 +180,16 @@ export default function Home({
                     'repeating-linear-gradient(45deg, transparent, transparent 13px, var(--fallback-b2, oklch(var(--b1))) 13px, var(--fallback-b2, oklch(var(--b1))) 14px)',
                 }}
               >
-                <div className="card textarea-info flex flex-col border border-base-200 bg-neutral p-4 shadow-lg">
+                <div className="card textarea-info flex flex-col border border-base-200 bg-neutral p-4 shadow-lg w-full">
                   <Allies
                     allies={allies}
                     setAllies={setAllies}
                     partySize={partySize}
-                    addCreature={addCreature}
                     setPartySize={setPartySize}
                     partyAverageLevel={partyAverageLevel}
                     setPartyAverageLevel={setPartyAverageLevel}
+                    players={players}
+                    setPlayers={setPlayers}
                   />
                 </div>
               </div>
@@ -203,11 +203,12 @@ export default function Home({
                   const canDelete = array.length > 1
                   const { hpLost, resourcesSpent, multiplier } =
                     _encounterCalculator.recalculateDifficulty(
-                      partyAverageLevel,
-                      partySize,
-                      wave.enemies,
-                      allies,
-                      wave.scaling
+                        {
+                          enemyChallengeRatings: wave.enemies,
+                          allyChallengeRatings: allies,
+                          partyLevels: players,
+                          accountForPowerDecay: wave.scaling
+                        }
                     )
 
                   const canDuplicate = Boolean(wave.enemies.length)

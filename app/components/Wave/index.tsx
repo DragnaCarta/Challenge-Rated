@@ -1,12 +1,12 @@
-import { useId } from 'react'
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
+import {calculateOccurrences, ENEMY_CREATURE_TOGGLE} from "@/app/utils";
 
 type Props = {
   enemies: number[]
   setEnemies: (ns: number[]) => void
-  addCreature: (value: number, toggle: 0 | 1) => void
+  addCreature: (value: number, toggle: 0 | 1 | 2) => void
 }
 
 export function Wave({ enemies, setEnemies, addCreature }: Props) {
@@ -31,13 +31,7 @@ export function Wave({ enemies, setEnemies, addCreature }: Props) {
     return setEnemies(predicate(enemies))
   }
 
-  const enemyCrOccurrences = enemies.reduce(function (
-    acc: Record<number, number>,
-    curr
-  ) {
-    return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
-  },
-  {})
+  const enemyCrOccurrences = calculateOccurrences(enemies)
 
   const keys = Object.keys(enemyCrOccurrences)
     .slice()
@@ -59,12 +53,13 @@ export function Wave({ enemies, setEnemies, addCreature }: Props) {
                 increaseCount={(cr) => addEnemy(cr)}
                 decreaseCount={(cr) => removeEnemy(cr)}
                 onClear={() => clearOccurences(cr)}
+                creatureToggle={ENEMY_CREATURE_TOGGLE}
               />
             )
           })}
       </div>
       {Boolean(keys.length) && <div className="mt-4" />}
-      <AddCreature addCreature={addCreature} creatureToggle={0} unit="Power" />
+      <AddCreature addCreature={addCreature} creatureToggle={ENEMY_CREATURE_TOGGLE} unit="Power" />
     </>
   )
 }

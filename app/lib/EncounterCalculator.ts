@@ -1,6 +1,8 @@
 import Fraction from 'fraction.js'
 import multipliers from './multipliers.json'
 import Big from 'big.js'
+import {calculateOccurrences} from "@/app/utils";
+import {median} from "simple-statistics"
 /**
  * EncounterCalculator.js
  *
@@ -136,71 +138,82 @@ class EncounterCalculator {
     30: 669,
   }
 
+  // Utility function to calculate total enemy power based on enemy CR occurrences
+  static calculateTotalPower(
+      {creatureOccurrences, powerTable} :
+      {creatureOccurrences: Record<number, number>, powerTable: Record<number, number>}): number {
+    let totalEnemyPower = 0;
+
+    Object.keys(creatureOccurrences).forEach(function (cr) {
+      const enemyChallengeRating = parseFloat(cr); // Convert CR to number
+      const enemiesWithChallengeRating = creatureOccurrences[enemyChallengeRating]; // Number of enemies with that CR
+      const enemyPower = powerTable[enemyChallengeRating]; // Get the power of this CR
+
+      // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
+      // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
+
+      // Add to total power by multiplying enemy power with the count of enemies of that CR
+      totalEnemyPower += enemyPower * enemiesWithChallengeRating;
+    });
+
+    return totalEnemyPower;
+  }
+
+
   /**
    * Recalculates the encounter difficulty based on current Party and Encounter states.
    */
   recalculateDifficulty(
-    partyLevel: number,
-    partySize: number,
-    enemyChallengeRatings: number[],
-    allyChallengeRatings: number[],
-    accountForPowerDecay: boolean
-  ) {
+      {
+        enemyChallengeRatings,
+        allyChallengeRatings,
+        partyLevels,
+        accountForPowerDecay
+      } : {
+        enemyChallengeRatings: number[],
+        allyChallengeRatings: number[],
+        partyLevels: number[],
+        accountForPowerDecay: boolean
+      } ) {
     // Step 1: Scale the Power of each enemy and each ally.
-    let totalEnemyPower = 0
-    let totalAllyPower = 0
+    let totalEnemyPower: number
+    let totalAllyPower: number
+    let totalPartyPower: number
 
-    const enemyCrOccurrences = enemyChallengeRatings.reduce(function (
-      acc: Record<number, number>,
-      curr
-    ) {
-      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
-    },
-    {})
+    const enemyCrOccurrences = calculateOccurrences(enemyChallengeRatings)
 
-    const allyCrOccurrences = allyChallengeRatings.reduce(function (
-      acc: Record<number, number>,
-      curr
-    ) {
-      return acc[curr] ? ++acc[curr] : (acc[curr] = 1), acc
-    },
-    {})
+    const allyCrOccurrences = calculateOccurrences(allyChallengeRatings)
+
+    const partyLevelOccurrences = calculateOccurrences(partyLevels)
 
     // Assuming CRPowerLookup, LevelPowerLookup, and RatioScaleLookup are your lookup tables
-    Object.keys(enemyCrOccurrences).forEach(function (cr) {
-      const enemenyChallengeRating = parseFloat(cr)
-      const enemiesWithChallengeRating =
-        enemyCrOccurrences[enemenyChallengeRating]
-      const enemyPower =
-        EncounterCalculator.CRPowerLookup[enemenyChallengeRating]
+    totalEnemyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: enemyCrOccurrences,
+      powerTable: EncounterCalculator.CRPowerLookup})
 
-      // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
-      // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
+    totalAllyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: allyCrOccurrences,
+      powerTable: EncounterCalculator.CRPowerLookup})
 
-      totalEnemyPower += enemyPower * enemiesWithChallengeRating
-    })
+    totalPartyPower = EncounterCalculator.calculateTotalPower({creatureOccurrences: partyLevelOccurrences,
+      powerTable: EncounterCalculator.LevelPowerLookup})
 
-    Object.keys(allyCrOccurrences).forEach(function (cr) {
-      const allyChallengeRating = parseFloat(cr)
-      const alliesWithChallengeRating = allyCrOccurrences[allyChallengeRating]
-      const allyPower = EncounterCalculator.CRPowerLookup[allyChallengeRating]
-
-      // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
-      // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
-
-      totalAllyPower += allyPower * alliesWithChallengeRating
-    })
-
-    // Step 2: Calculate total player + ally Power.
-    const partyPower =
-      EncounterCalculator.LevelPowerLookup[partyLevel] * partySize
 
     const maxCr = enemyChallengeRatings.reduce(
-      (max, cr) => Math.max(max, cr),
-      0
+        (max, cr) => Math.max(max, cr),
+        0
     )
 
-    const multiplier = this.getMultiplier(partyLevel, maxCr)
+    let multiplier: Big
+    if (totalPartyPower + totalAllyPower !== 0 && partyLevels.length != 0) {
+      const medianPartyLevel = Math.ceil(median(partyLevels))
+      multiplier = this.getMultiplier(medianPartyLevel, maxCr)
+    } else {
+      multiplier = Big(1)
+    }
+
+    const bigTotalPartyPower = (accountForPowerDecay ? multiplier : Big(1)).times(Big(totalPartyPower))
+
+    let totalFriendlyPower = bigTotalPartyPower.plus(Big(totalAllyPower))
+
 
     // Step 3: Calculate difficulty.
     // These are the same things?
@@ -208,15 +221,15 @@ class EncounterCalculator {
     // const resourcesSpent = Math.round(0.67 * hpLost);
 
     // const difficulty = Math.round(100 * Math.pow(totalEnemyPower / totalPartyAndAllyPower, 2));
-    const difficulty = Big(totalEnemyPower)
+
+    const difficulty =
+        (totalFriendlyPower.eq(0) ? 0 : Big(totalEnemyPower)
       .div(
-        (accountForPowerDecay ? multiplier : Big(1))
-          .times(Big(partyPower))
-          .plus(Big(totalAllyPower))
+          totalFriendlyPower
       )
       .pow(2)
       .times(100)
-      .toNumber()
+      .toNumber())
 
     ///////////
     const difficultyLevels: {
@@ -248,7 +261,7 @@ class EncounterCalculator {
     }
   }
   // Function to retrieve the power multiplier based on player level and highest CR
-  private getMultiplier(playerLevel: number, highestCr: number): Big {
+  private getMultiplier(medianPlayerLevel: number, highestCr: number): Big {
     const highestCrFraction = new Fraction(highestCr).toFraction(true)
     const crKey = highestCrFraction // Construct the CR key as it appears in the dictionary
 
@@ -257,7 +270,8 @@ class EncounterCalculator {
     if (!levels) {
       throw new Error('Invalid CR provided.')
     }
-    const multiplier = levels[playerLevel]
+
+    const multiplier = levels[medianPlayerLevel]
     if (multiplier === undefined) {
       throw new Error('Invalid player level provided.')
     }
@@ -290,7 +304,7 @@ const _findClosestRatio = function (
   for (const { ratio, multiplier } of ratioTable) {
     const difference = Math.abs(targetRatio - ratio)
 
-    // Update closest values if a closer ratio is found.
+    // Update the closest values if a closer ratio is found.
     if (difference < smallestDifference) {
       closestRatio = ratio
       closestMultiplier = multiplier
