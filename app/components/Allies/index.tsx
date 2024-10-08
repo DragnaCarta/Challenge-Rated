@@ -1,7 +1,7 @@
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
-import {ALLY_CREATURE_TOGGLE, calculateOccurrences, PARTY_MEMBER_CREATURE_TOGGLE} from "@/app/utils";
+import {ALLY_CREATURE_TOGGLE, calculateOccurrences, PLAYER_CREATURE_TOGGLE} from "@/app/utils";
 
 type Props = {
   partySize: number
@@ -47,7 +47,7 @@ export function Allies({
 
   // Add function to manage party members, similar to allies
   function addPartyMember(challengeRating: number) {
-    sendEvent('party_member_added', { value: challengeRating, type: 'party' })
+    sendEvent('player_added', { value: challengeRating, type: 'party' })
     setPartyMembers([...partyMembers, challengeRating])
   }
 
@@ -90,7 +90,7 @@ export function Allies({
                       increaseCount={(cr) => addPartyMember(cr)}
                       decreaseCount={(cr) => removePartyMember(cr)}
                       onClear={clearPartyOccurrences(cr, 1)}
-                      creatureToggle={PARTY_MEMBER_CREATURE_TOGGLE}
+                      creatureToggle={PLAYER_CREATURE_TOGGLE}
                   />
               )
             })}

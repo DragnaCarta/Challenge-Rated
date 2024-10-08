@@ -204,7 +204,7 @@ class EncounterCalculator {
     )
 
     let multiplier: Big
-    if (totalPartyPower + totalAllyPower !== 0) {
+    if (totalPartyPower + totalAllyPower !== 0 && partyLevels.length != 0) {
       const medianPartyLevel = Math.ceil(median(partyLevels))
       multiplier = this.getMultiplier(medianPartyLevel, maxCr)
     } else {

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { sendEvent } from '@/app/lib/analytics'
-import {creatureHasCRorLevel, getCreatureType, PARTY_MEMBER_CREATURE_TYPE} from "@/app/utils";
+import {creatureHasCRorLevel, getCreatureType, PLAYER_MEMBER_CREATURE_TYPE} from "@/app/utils";
 import {RadioOption} from "@/app/lib/types";
 import PartyLevelOptions from "@/app/lib/PartyLevelOptions";
 import ChallengeRatingOptions from "@/app/lib/ChallengeRatingOptions";
@@ -14,7 +14,7 @@ type Props = {
 
 function getCreatureOptions(creatureType: string): RadioOption[] {
     switch (creatureType) {
-        case PARTY_MEMBER_CREATURE_TYPE:
+        case PLAYER_MEMBER_CREATURE_TYPE:
             return PartyLevelOptions
         default:
             return ChallengeRatingOptions

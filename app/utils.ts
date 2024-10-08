@@ -6,8 +6,8 @@ export const ENEMY_CREATURE_TOGGLE = 0
 export const ENEMY_CREATURE_TYPE = 'Enemy'
 export const ALLY_CREATURE_TOGGLE = 1
 export const ALLY_CREATURE_TYPE = 'Ally'
-export const PARTY_MEMBER_CREATURE_TOGGLE = 2
-export const PARTY_MEMBER_CREATURE_TYPE = 'Party Member'
+export const PLAYER_CREATURE_TOGGLE = 2
+export const PLAYER_MEMBER_CREATURE_TYPE = 'Player'
 
 export const UNKNOWN_CREATURE_TYPE = 'Unknown'
 
@@ -18,8 +18,8 @@ export function getCreatureType(creatureToggle: 0 | 1 | 2): string {
             return ALLY_CREATURE_TYPE;
         case ENEMY_CREATURE_TOGGLE:
             return ENEMY_CREATURE_TYPE;
-        case PARTY_MEMBER_CREATURE_TOGGLE:
-            return PARTY_MEMBER_CREATURE_TYPE;
+        case PLAYER_CREATURE_TOGGLE:
+            return PLAYER_MEMBER_CREATURE_TYPE;
         default:
             return UNKNOWN_CREATURE_TYPE;
     }
@@ -27,7 +27,7 @@ export function getCreatureType(creatureToggle: 0 | 1 | 2): string {
 
 
 export function creatureHasCRorLevel(creatureToggle: 0 | 1 | 2): string {
-    return getCreatureType(creatureToggle) === PARTY_MEMBER_CREATURE_TYPE ? 'Level' : 'CR'
+    return getCreatureType(creatureToggle) === PLAYER_MEMBER_CREATURE_TYPE ? 'Level' : 'CR'
 }
 
 
