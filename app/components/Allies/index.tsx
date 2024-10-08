@@ -8,8 +8,8 @@ type Props = {
   partyAverageLevel: number
   allies: number[]
   setAllies: (ns: number[]) => void
-  partyMembers: number[]
-  setPartyMembers: (ns: number[]) => void
+  players: number[]
+  setPlayers: (ns: number[]) => void
   setPartyAverageLevel: (n: number) => void
   setPartySize: (n: number) => void
 }
@@ -17,11 +17,11 @@ type Props = {
 export function Allies({
     allies,
     setAllies,
-    partyMembers,
-    setPartyMembers,}: Props) {
+    players,
+    setPlayers,}: Props) {
   const allyCrOccurrences = calculateOccurrences(allies)
 
-  const partyLevelOccurrences = calculateOccurrences(partyMembers)
+  const partyLevelOccurrences = calculateOccurrences(players)
 
   function addAlly(challengeRating: number) {
     sendEvent('creature_added', { value: challengeRating, type: 'ally' })
@@ -46,17 +46,17 @@ export function Allies({
   }
 
   // Add function to manage party members, similar to allies
-  function addPartyMember(challengeRating: number) {
+  function addPlayer(challengeRating: number) {
     sendEvent('player_added', { value: challengeRating, type: 'party' })
-    setPartyMembers([...partyMembers, challengeRating])
+    setPlayers([...players, challengeRating])
   }
 
   // Function to remove a specific party member (by CR)
-  function removePartyMember(challengeRating: number) {
-    const index = partyMembers.indexOf(challengeRating);  // Find index of the CR
+  function removePlayer(challengeRating: number) {
+    const index = players.indexOf(challengeRating);  // Find index of the CR
     if (index > -1) {
-      const newPartyMembers = partyMembers.filter((_, idx) => idx !== index); // Filter out
-      setPartyMembers([...newPartyMembers]);  // Update the state
+      const newPlayers = players.filter((_, idx) => idx !== index); // Filter out
+      setPlayers([...newPlayers]);  // Update the state
     }
   }
 
@@ -66,14 +66,14 @@ export function Allies({
         creatures.filter((creature) => creature !== cr);  // Predicate to filter out all CRs
 
     return function () {
-      return setPartyMembers(predicate(partyMembers));  // Update partyMembers using the predicate
+      return setPlayers(predicate(players));  // Update players using the predicate
     }
   }
 
   return (
     <>
       <div className="flex flex-col gap-2 my-4 grow">
-        <AddCreature addCreature={addPartyMember} creatureToggle={2} />
+        <AddCreature addCreature={addPlayer} creatureToggle={2} />
 
         {/* Render party members */}
         {Object.keys(partyLevelOccurrences)
@@ -87,8 +87,8 @@ export function Allies({
                       key={cr}
                       challengeRating={cr}
                       count={crCount}
-                      increaseCount={(cr) => addPartyMember(cr)}
-                      decreaseCount={(cr) => removePartyMember(cr)}
+                      increaseCount={(cr) => addPlayer(cr)}
+                      decreaseCount={(cr) => removePlayer(cr)}
                       onClear={clearPartyOccurrences(cr, 1)}
                       creatureToggle={PLAYER_CREATURE_TOGGLE}
                   />

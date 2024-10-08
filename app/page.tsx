@@ -68,7 +68,7 @@ export default function Home({
   const [allies, setAllies] = useState<number[]>([])
 
   // Add state for party members
-  const [partyMembers, setPartyMembers] = useState<number[]>([])
+  const [players, setPlayers] = useState<number[]>([])
 
   const setWaveEnemies = (waveId: string, enemies: number[]) => {
     setWaves((waves) => ({
@@ -97,7 +97,7 @@ export default function Home({
       return _encounterCalculator.recalculateDifficulty(
           {enemyChallengeRatings: wave.enemies,
           allyChallengeRatings: allies,
-          partyLevels: partyMembers,
+          partyLevels: players,
           accountForPowerDecay: wave.scaling}
       )
     })
@@ -188,8 +188,8 @@ export default function Home({
                     setPartySize={setPartySize}
                     partyAverageLevel={partyAverageLevel}
                     setPartyAverageLevel={setPartyAverageLevel}
-                    partyMembers={partyMembers}
-                    setPartyMembers={setPartyMembers}
+                    players={players}
+                    setPlayers={setPlayers}
                   />
                 </div>
               </div>
@@ -206,7 +206,7 @@ export default function Home({
                         {
                           enemyChallengeRatings: wave.enemies,
                           allyChallengeRatings: allies,
-                          partyLevels: partyMembers,
+                          partyLevels: players,
                           accountForPowerDecay: wave.scaling
                         }
                     )
