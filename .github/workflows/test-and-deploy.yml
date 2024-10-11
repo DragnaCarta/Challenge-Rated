@@ -3,10 +3,12 @@ name: Test on Push or Pull Request
 on:
   push:  # Trigger on any push to any branch
     branches:
-      - '**'  # This wildcard ensures the workflow runs on any branch
+#      - '**'  # This wildcard ensures the workflow runs on any branch
+      - 'add_tests_and_error_boundry'  # This wildcard ensures the workflow runs on any branch
   pull_request:  # Trigger on any pull request
     branches:
       - '**'  # This wildcard ensures the workflow runs on any pull request to any branch
+      - 'add_tests_and_error_boundry'  # This wildcard ensures the workflow runs on any pull request to any branch
 
 jobs:
   test:
@@ -21,7 +23,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '16'  # Use the Node.js version for your project
+          node-version: '20'  # Use the Node.js version for your project
+
+      # Install pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       # Install dependencies
       - name: Install dependencies
