@@ -1,0 +1,32 @@
+name: Test on Push or Pull Request
+
+on:
+  push:  # Trigger on any push to any branch
+    branches:
+      - '**'  # This wildcard ensures the workflow runs on any branch
+  pull_request:  # Trigger on any pull request
+    branches:
+      - '**'  # This wildcard ensures the workflow runs on any pull request to any branch
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Node.js environment
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'  # Use the Node.js version for your project
+
+      # Install dependencies
+      - name: Install dependencies
+        run: pnpm install  # or npm install if you use npm
+
+      # Run your tests
+      - name: Run tests
+        run: pnpm test  # Make sure this command runs your test suite

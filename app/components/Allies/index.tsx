@@ -1,7 +1,7 @@
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
-import {ALLY_CREATURE_TOGGLE, calculateOccurrences, PLAYER_CREATURE_TOGGLE} from "@/app/utils";
+import {ALLY_CREATURE_TOGGLE, calculateOccurrences, PLAYER_CREATURE_TOGGLE} from "@/app/lib/utils";
 
 type Props = {
   partySize: number
