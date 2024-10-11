@@ -15,6 +15,7 @@ import { IconTrash } from './ui/icons/IconTrash'
 import { IconCopy } from './ui/icons/IconCopy'
 import { InfoTooltip } from './components/InfoTooltip'
 import { sendEvent } from './lib/analytics'
+import withErrorBoundary from "@/app/components/ErrorBoundryHOC";
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -37,7 +38,7 @@ type Wave = {
 
 const INITIAL_WAVE: Wave = { enemies: [], scaling: false }
 const createInitialWave = () => ({ [v4()]: INITIAL_WAVE })
-export default function Home({
+const Home = ({
   searchParams,
 }: {
   searchParams:
@@ -48,7 +49,7 @@ export default function Home({
         allies?: string
       }
     | undefined
-}) {
+}) => {
   const [waves, setWaves] = useState<{ [key: string]: Wave }>(
     createInitialWave()
   )
@@ -376,3 +377,5 @@ export default function Home({
     </section>
   )
 }
+
+export default withErrorBoundary(Home);

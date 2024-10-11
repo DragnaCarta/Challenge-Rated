@@ -1,7 +1,7 @@
 import Fraction from 'fraction.js'
 import multipliers from './multipliers.json'
 import Big from 'big.js'
-import {calculateOccurrences} from "@/app/utils";
+import {calculateOccurrences, INVALID_VALUE_PROVIDED, NO_ENTRY_IN_TABLE} from "@/app/lib/utils";
 import {median} from "simple-statistics"
 /**
  * EncounterCalculator.js
@@ -147,7 +147,12 @@ class EncounterCalculator {
     Object.keys(creatureOccurrences).forEach(function (cr) {
       const enemyChallengeRating = parseFloat(cr); // Convert CR to number
       const enemiesWithChallengeRating = creatureOccurrences[enemyChallengeRating]; // Number of enemies with that CR
-      const enemyPower = powerTable[enemyChallengeRating]; // Get the power of this CR
+      const enemyPower = powerTable.hasOwnProperty(enemyChallengeRating) ? powerTable[enemyChallengeRating] : null; // Get the power of this CR
+      if (enemyPower === null) {
+        const error_msg = String(NO_ENTRY_IN_TABLE.format({ variable_name: 'enemyPower', variable_value: enemyPower,
+          table_name: 'powerTable'}))
+        throw new Error(error_msg)
+      }
 
       // const closestRatio = _findClosestRatio(ratio, EncounterCalculator.RatioScaleLookup);
       // const scaleMultiplier = EncounterCalculator.RatioScaleLookup[closestRatio];
@@ -175,6 +180,12 @@ class EncounterCalculator {
         partyLevels: number[],
         accountForPowerDecay: boolean
       } ) {
+    // temp logic for error demonstration
+    if (accountForPowerDecay) {
+      throw new Error('test error')
+    }
+
+
     // Step 1: Scale the Power of each enemy and each ally.
     let totalEnemyPower: number
     let totalAllyPower: number
@@ -204,6 +215,7 @@ class EncounterCalculator {
 
     let multiplier: Big
     if (totalPartyPower + totalAllyPower !== 0 && partyLevels.length != 0) {
+      // const medianPartyLevel = median(partyLevels)
       const medianPartyLevel = Math.ceil(median(partyLevels))
       multiplier = this.getMultiplier(medianPartyLevel, maxCr)
     } else {
@@ -268,12 +280,16 @@ class EncounterCalculator {
     const levels: any = (multipliers as any)[crKey]
 
     if (!levels) {
-      throw new Error('Invalid CR provided.')
+      const error_msg = String(INVALID_VALUE_PROVIDED.format({ value_type: 'CR', invalid_value: crKey,
+        invalid_scope: 'the multipliers table' }))
+      throw new Error(error_msg)
     }
 
     const multiplier = levels[medianPlayerLevel]
     if (multiplier === undefined) {
-      throw new Error('Invalid player level provided.')
+      const error_msg = String(INVALID_VALUE_PROVIDED.format({ value_type: 'median player level',
+        invalid_value: medianPlayerLevel, invalid_scope: 'the levels table' }))
+      throw new Error(error_msg)
     }
     return Big(multiplier)
   }

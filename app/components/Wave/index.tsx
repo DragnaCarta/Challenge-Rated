@@ -1,7 +1,7 @@
 import { AddCreature } from '../AddCreature'
 import { CreatureItem } from '../CreatureItem'
 import { sendEvent } from '@/app/lib/analytics'
-import {calculateOccurrences, ENEMY_CREATURE_TOGGLE} from "@/app/utils";
+import {calculateOccurrences, ENEMY_CREATURE_TOGGLE} from "@/app/lib/utils";
 
 type Props = {
   enemies: number[]
