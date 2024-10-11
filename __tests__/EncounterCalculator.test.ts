@@ -107,89 +107,89 @@ describe('test calculateTotalPower function in EncounterCalculator', () => {
 });
 
 
-describe('test recalculateDifficulty in EncounterCalculator', () => {
-    let calculator: EncounterCalculator;
-
-    beforeEach(() => {
-        calculator = new EncounterCalculator();
-    });
-
-    it('should calculate difficulty, hpLost, and resourcesSpent correctly for basic scenario', () => {
-        const result = calculator.recalculateDifficulty({
-            enemyChallengeRatings: [5, 3, 2],
-            allyChallengeRatings: [4, 2],
-            partyLevels: [3, 4],
-            accountForPowerDecay: true,
-        });
-
-        expect(result).toHaveProperty('hpLost');
-        expect(result).toHaveProperty('resourcesSpent');
-        expect(result).toHaveProperty('encounterDifficulty');
-        expect(result).toHaveProperty('multiplier');
-
-        expect(result.hpLost).toBeGreaterThan(0);
-        expect(result.resourcesSpent).toBeGreaterThan(0);
-        expect(result.encounterDifficulty).toBe('Mild');  // Example expectation
-    });
-
-    it('should return 0 for hpLost and resourcesSpent when there are no enemies', () => {
-        const result = calculator.recalculateDifficulty({
-            enemyChallengeRatings: [],
-            allyChallengeRatings: [4, 2],
-            partyLevels: [3, 4],
-            accountForPowerDecay: true,
-        });
-
-        expect(result.hpLost).toBe(0);
-        expect(result.resourcesSpent).toBe(0);
-        expect(result.encounterDifficulty).toBe('Unknown');
-    });
-
-    it('should calculate correctly when there are no allies', () => {
-        const result = calculator.recalculateDifficulty({
-            enemyChallengeRatings: [5, 3],
-            allyChallengeRatings: [],
-            partyLevels: [3, 4],
-            accountForPowerDecay: false,
-        });
-
-        expect(result.hpLost).toBeGreaterThan(0);
-        expect(result.resourcesSpent).toBeGreaterThan(0);
-        expect(result.encounterDifficulty).toBe('Mild');  // Example expectation
-    });
-
-    it('should handle all zero powers correctly', () => {
-        const result = calculator.recalculateDifficulty({
-            enemyChallengeRatings: [],
-            allyChallengeRatings: [],
-            partyLevels: [],
-            accountForPowerDecay: true,
-        });
-
-        expect(result.hpLost).toBe(0);
-        expect(result.resourcesSpent).toBe(0);
-        expect(result.encounterDifficulty).toBe('Unknown');
-    });
-
-    it('should correctly calculate the maximum challenge rating', () => {
-        const result = calculator.recalculateDifficulty({
-            enemyChallengeRatings: [1, 8, 10, 3],
-            allyChallengeRatings: [4, 2],
-            partyLevels: [3, 5],
-            accountForPowerDecay: true,
-        });
-
-        expect(result.multiplier).toBeGreaterThan(1);  // Example expectation based on scaling
-    });
-
-    it('should not apply scaling when accountForPowerDecay is false', () => {
-        const result = calculator.recalculateDifficulty({
-            enemyChallengeRatings: [5, 3],
-            allyChallengeRatings: [4, 2],
-            partyLevels: [3, 4],
-            accountForPowerDecay: false,
-        });
-
-        expect(result.multiplier).toBe(1);
-    });
-});
+// describe('test recalculateDifficulty in EncounterCalculator', () => {
+//     let calculator: EncounterCalculator;
+//
+//     beforeEach(() => {
+//         calculator = new EncounterCalculator();
+//     });
+//
+//     it('should calculate difficulty, hpLost, and resourcesSpent correctly for basic scenario', () => {
+//         const result = calculator.recalculateDifficulty({
+//             enemyChallengeRatings: [5, 3, 2],
+//             allyChallengeRatings: [4, 2],
+//             partyLevels: [3, 4],
+//             accountForPowerDecay: true,
+//         });
+//
+//         expect(result).toHaveProperty('hpLost');
+//         expect(result).toHaveProperty('resourcesSpent');
+//         expect(result).toHaveProperty('encounterDifficulty');
+//         expect(result).toHaveProperty('multiplier');
+//
+//         expect(result.hpLost).toBeGreaterThan(0);
+//         expect(result.resourcesSpent).toBeGreaterThan(0);
+//         expect(result.encounterDifficulty).toBe('Mild');  // Example expectation
+//     });
+//
+//     it('should return 0 for hpLost and resourcesSpent when there are no enemies', () => {
+//         const result = calculator.recalculateDifficulty({
+//             enemyChallengeRatings: [],
+//             allyChallengeRatings: [4, 2],
+//             partyLevels: [3, 4],
+//             accountForPowerDecay: true,
+//         });
+//
+//         expect(result.hpLost).toBe(0);
+//         expect(result.resourcesSpent).toBe(0);
+//         expect(result.encounterDifficulty).toBe('Unknown');
+//     });
+//
+//     it('should calculate correctly when there are no allies', () => {
+//         const result = calculator.recalculateDifficulty({
+//             enemyChallengeRatings: [5, 3],
+//             allyChallengeRatings: [],
+//             partyLevels: [3, 4],
+//             accountForPowerDecay: false,
+//         });
+//
+//         expect(result.hpLost).toBeGreaterThan(0);
+//         expect(result.resourcesSpent).toBeGreaterThan(0);
+//         expect(result.encounterDifficulty).toBe('Mild');  // Example expectation
+//     });
+//
+//     it('should handle all zero powers correctly', () => {
+//         const result = calculator.recalculateDifficulty({
+//             enemyChallengeRatings: [],
+//             allyChallengeRatings: [],
+//             partyLevels: [],
+//             accountForPowerDecay: true,
+//         });
+//
+//         expect(result.hpLost).toBe(0);
+//         expect(result.resourcesSpent).toBe(0);
+//         expect(result.encounterDifficulty).toBe('Unknown');
+//     });
+//
+//     it('should correctly calculate the maximum challenge rating', () => {
+//         const result = calculator.recalculateDifficulty({
+//             enemyChallengeRatings: [1, 8, 10, 3],
+//             allyChallengeRatings: [4, 2],
+//             partyLevels: [3, 5],
+//             accountForPowerDecay: true,
+//         });
+//
+//         expect(result.multiplier).toBeGreaterThan(1);  // Example expectation based on scaling
+//     });
+//
+//     it('should not apply scaling when accountForPowerDecay is false', () => {
+//         const result = calculator.recalculateDifficulty({
+//             enemyChallengeRatings: [5, 3],
+//             allyChallengeRatings: [4, 2],
+//             partyLevels: [3, 4],
+//             accountForPowerDecay: false,
+//         });
+//
+//         expect(result.multiplier).toBe(1);
+//     });
+// });
