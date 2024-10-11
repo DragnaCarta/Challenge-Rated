@@ -11,7 +11,7 @@ on:
       - 'add_tests_and_error_boundry'  # This wildcard ensures the workflow runs on any pull request to any branch
 
 jobs:
-  test:
+  run_tests:
     runs-on: ubuntu-latest
 
     steps:
