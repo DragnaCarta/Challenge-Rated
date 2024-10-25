@@ -8,14 +8,13 @@ import { Wave } from './components/Wave'
 import EncounterCalculator from './lib/EncounterCalculator'
 import { INITIAL_PARTY_LEVEL } from './lib/PartyLevelOptions'
 import { INITIAL_PARTY_SIZE } from './lib/PartySizeOptions'
-
 import IconPlus from './ui/icons/IconPlus'
 import { IconRefresh } from './ui/icons/IconRefresh'
 import { IconTrash } from './ui/icons/IconTrash'
 import { IconCopy } from './ui/icons/IconCopy'
 import { InfoTooltip } from './components/InfoTooltip'
 import { sendEvent } from './lib/analytics'
-import withErrorBoundary from "@/app/components/ErrorBoundryHOC";
+
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -251,7 +250,6 @@ const Home = ({
                           )}
                         </div>
                       </header>
-
                       <Wave
                         enemies={wave.enemies}
                         setEnemies={(ns) => setWaveEnemies(waveId, ns)}
@@ -375,7 +373,7 @@ const Home = ({
         </aside>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default withErrorBoundary(Home);
+export default Home;

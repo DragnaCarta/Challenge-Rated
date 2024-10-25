@@ -180,10 +180,7 @@ class EncounterCalculator {
         partyLevels: number[],
         accountForPowerDecay: boolean
       } ) {
-    // temp logic for error demonstration
-    if (accountForPowerDecay) {
-      throw new Error('test error')
-    }
+
 
 
     // Step 1: Scale the Power of each enemy and each ally.

@@ -6,6 +6,7 @@ import Footer from './ui/footer'
 import Header from './ui/header'
 
 import './globals.css'
+import ErrorBoundary from './components/ErrorBoundry'
 
 export const metadata: Metadata = {
   title: `ChallengeRated - Encounter Building Tool`,
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <ErrorBoundary>
         <section
           className="grid relative bg-neutral"
           style={{ gridTemplateRows: 'auto 1fr auto', minHeight: '100vh' }}
@@ -33,6 +35,7 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer className="mt-auto" />
         </section>
+        </ErrorBoundary>
       </body>
       {process.env.NODE_ENV !== 'development' && (
         <GoogleAnalytics gaId="G-G3RLQL08WN" />
