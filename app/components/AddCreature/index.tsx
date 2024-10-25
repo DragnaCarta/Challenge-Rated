@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { sendEvent } from '@/app/lib/analytics'
-import {creatureHasCRorLevel, getCreatureType, PLAYER_MEMBER_CREATURE_TYPE} from "@/app/utils";
+import {creatureHasCRorLevel, getCreatureType, PLAYER_MEMBER_CREATURE_TYPE} from "@/app/lib/utils";
 import {RadioOption} from "@/app/lib/types";
 import PartyLevelOptions from "@/app/lib/PartyLevelOptions";
 import ChallengeRatingOptions from "@/app/lib/ChallengeRatingOptions";

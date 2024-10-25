@@ -8,13 +8,13 @@ import { Wave } from './components/Wave'
 import EncounterCalculator from './lib/EncounterCalculator'
 import { INITIAL_PARTY_LEVEL } from './lib/PartyLevelOptions'
 import { INITIAL_PARTY_SIZE } from './lib/PartySizeOptions'
-
 import IconPlus from './ui/icons/IconPlus'
 import { IconRefresh } from './ui/icons/IconRefresh'
 import { IconTrash } from './ui/icons/IconTrash'
 import { IconCopy } from './ui/icons/IconCopy'
 import { InfoTooltip } from './components/InfoTooltip'
 import { sendEvent } from './lib/analytics'
+
 
 const _encounterCalculator = new EncounterCalculator()
 
@@ -37,7 +37,7 @@ type Wave = {
 
 const INITIAL_WAVE: Wave = { enemies: [], scaling: false }
 const createInitialWave = () => ({ [v4()]: INITIAL_WAVE })
-export default function Home({
+const Home = ({
   searchParams,
 }: {
   searchParams:
@@ -48,7 +48,7 @@ export default function Home({
         allies?: string
       }
     | undefined
-}) {
+}) => {
   const [waves, setWaves] = useState<{ [key: string]: Wave }>(
     createInitialWave()
   )
@@ -250,7 +250,6 @@ export default function Home({
                           )}
                         </div>
                       </header>
-
                       <Wave
                         enemies={wave.enemies}
                         setEnemies={(ns) => setWaveEnemies(waveId, ns)}
@@ -374,5 +373,7 @@ export default function Home({
         </aside>
       </div>
     </section>
-  )
-}
+  );
+};
+
+export default Home;

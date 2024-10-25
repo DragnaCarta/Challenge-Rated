@@ -3,7 +3,7 @@ import Fraction from 'fraction.js'
 import IconMinus from '@/app/ui/icons/IconMinus'
 import IconPlus from '@/app/ui/icons/IconPlus'
 import { IconTrash } from '@/app/ui/icons/IconTrash'
-import {creatureHasCRorLevel} from "@/app/utils";
+import {creatureHasCRorLevel} from "@/app/lib/utils";
 
 type CreatureListItemProps = {
   challengeRating: number
